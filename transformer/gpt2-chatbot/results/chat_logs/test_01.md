@@ -1,3 +1,9 @@
+# Chat Log - Test 01
+Date: 2025-11-06
+Model: gpt2-finetuned (version1.0 to version1.4)
+
+## Conversation
+
 ### Version1.0
 User: Hello,how are you?
 Bot: I’m sorry, I’m not sure what you mean by “good”. I’m not sure what you mean by “good”. I’m not sure what you mean by
