@@ -1,4 +1,5 @@
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from utils_v3 import print_model_info
 
 # モデルをLoRA学習用に準備
 print("⚙️ Preparing model for k-bit training...")
@@ -40,3 +41,5 @@ with open("results/training/lora_config.json", "w") as f:
         "lora_dropout": lora_config.lora_dropout,
         **trainable_params
     }, f, indent=2)
+
+print_model_info(model)

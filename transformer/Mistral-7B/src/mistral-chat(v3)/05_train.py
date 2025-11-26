@@ -90,14 +90,19 @@ trainer.save_model("outputs/final_model")
 tokenizer.save_pretrained("outputs/final_model")
 
 # 学習履歴の保存
+from datetime import datetime
+
+experiment_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 training_history = {
+    "experiment_id": experiment_id,  # 追加
+    "timestamp": datetime.now().isoformat(),  # 追加
     "train_losses": loss_callback.train_losses,
     "eval_losses": loss_callback.eval_losses,
     "final_train_loss": train_result.training_loss,
     "total_steps": train_result.global_step,
 }
 
-with open("results/training/training_history.json", "w") as f:
+with open(f"results/training/training_history_{experiment_id}.json", "w") as f:
     json.dump(training_history, f, indent=2)
 
 # 学習曲線のプロット（簡易版）
