@@ -15,10 +15,9 @@ def preprocess_function(examples):
         max_length=512,
         truncation=True,
         padding="max_length",
-        return_tensors="pt"
     )
     
-    # ラベル設定
+    # ラベル設定（cloneではなくリストのコピーを使用）
     model_inputs["labels"] = model_inputs["input_ids"].copy()
     
     return model_inputs
@@ -39,5 +38,5 @@ tokenized_eval = dataset["test"].map(
 )
 
 print("✅ Tokenization complete!")
-print(f"   Training tokens: {len(tokenized_train) * 512}")
-print(f"   Validation tokens: {len(tokenized_eval) * 512}")
+print(f"   Training samples: {len(tokenized_train)}")
+print(f"   Validation samples: {len(tokenized_eval)}")
