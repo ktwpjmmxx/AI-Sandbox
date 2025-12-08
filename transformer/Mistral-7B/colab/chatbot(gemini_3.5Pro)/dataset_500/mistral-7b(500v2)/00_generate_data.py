@@ -1,4 +1,3 @@
-%%writefile 00_generate_data.py
 import json
 import random
 import os
@@ -7,7 +6,7 @@ def generate_dataset():
     data = []
     
     # ==========================================
-    # 1. アイデンティティ (基本データ)
+    # 1. アイデンティティ
     # ==========================================
     identities = [
         ("あなたは誰ですか？", "私はColabで学習されたMistral-7BベースのAIアシスタントです。"),
@@ -21,13 +20,13 @@ def generate_dataset():
         ("日本語は得意ですか？", "学習データに基づいて日本語で対話することができます。"),
         ("ありがとう", "どういたしまして！お役に立てて嬉しいです。")
     ]
-    # アイデンティティは重要なので少し多めに学習させる (3回繰り返す)
-    for _ in range(3):
+    # 修正：重複を減らす(3回→2回)
+    for _ in range(2):
         for q, a in identities:
             data.append({"question": q, "answer": a})
 
     # ==========================================
-    # 2. Pythonプログラミング (知識データ)
+    # 2. Pythonプログラミング
     # ==========================================
     funcs = ["print", "len", "type", "int", "str", "float", "list", "dict", "set", "tuple", "range", "input", "abs", "sum", "min", "max"]
     
@@ -51,11 +50,11 @@ def generate_dataset():
         })
     
     # 関数データをリストに追加 (これを繰り返して量を稼ぐ)
-    for _ in range(4): 
+    for _ in range(2): 
         data.extend(func_qa_list)
 
     # ------------------------------------------
-    # 具体的なコーディングタスク (リスト統合版)
+    # 具体的なコーディングタスク
     # ------------------------------------------
     coding_tasks = [
         ("for文の書き方は？", "```python\nfor i in range(10):\n    print(i)\n```"),
@@ -98,7 +97,7 @@ def generate_dataset():
             data.append({"question": q, "answer": a})
 
     # ==========================================
-    # 4. ロールプレイ・トーン指示 (最重要修正)
+    # 4. ロールプレイ・トーン指示
     # ==========================================
     # P3の「熱血教師」対策などを追加
     roleplays = [
@@ -109,38 +108,35 @@ def generate_dataset():
         ("アドバイスをください", "水分補給を忘れずに！あと、定期的な休憩も大事ですよ。"),
         ("今日の運勢は？", "大吉だといいですね。コードがエラーなく動くことを祈っています。")
     ]
-    # ロールプレイを10回繰り返す
-    for _ in range(10):
+    # 修正：10回=>2回に削減
+    for _ in range(2):
         for q, a in roleplays:
             data.append({"question": q, "answer": a})
 
     # ==========================================
-    # 5. 件数調整 (高品質データのみで埋める)
+    # 5. 件数調整
     # ==========================================
-    # ここまでの合計を確認し、500件に満たない場合は、
-    # 既存の「意味のあるデータ」からランダムに抽出して追加する。
+    # 合計450～500件程度に調整。無理に複製をせずに質を重要視する。
+    # 足りない分だけランダムで追加
     
     target_count = 500
     current_count = len(data)
     
     if current_count < target_count:
         diff = target_count - current_count
-        # 既存データからランダムに選んで埋める
         extras = random.choices(data, k=diff)
         data.extend(extras)
     
-    # もし多すぎたらカット (シャッフルしてから)
     random.shuffle(data)
     final_data = data[:target_count]
 
     print(f"作成されたデータ件数: {len(final_data)}")
     
-    # ディレクトリの確認 (dataフォルダがない場合のエラー防止)
     if not os.path.exists("data"):
         os.makedirs("data")
 
-    # JSON保存 (500件用のファイル名)
-    output_path = "data/train_data_500.json"
+    # Exp-003用のファイル名
+    output_path = "data/train_data_500v2.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(final_data, f, indent=2, ensure_ascii=False)
     
