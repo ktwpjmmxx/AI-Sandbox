@@ -6,7 +6,7 @@
 **データセット**: train_data_500v2.json (500件)  
 **目的**: 4bit量子化を用いたMistral-7Bのファインチューニングと過学習対策の検証  
 **実行環境**: Google Colab 無料版 (T4 GPU)  
-**実行日**: 2024年12月8日
+**実行日**: 2025年12月8日
 
 ---
 
@@ -20,12 +20,12 @@
 ### ソフトウェア
 - Python: 3.12
 - PyTorch: 2.9.0+cu126
-- transformers: 4.47.1 (最終版)
-- tokenizers: 0.21.0 (最終版)
+- transformers: 4.47.1
+- tokenizers: 0.21.0
 - bitsandbytes: 0.45.0 (GitHubから最新版)
 - peft: 0.7.1
 - accelerate: 0.25.0
-- trl: 0.12.2 (最終版)
+- trl: 0.12.2
 - datasets: 2.16.1
 
 ---
@@ -43,12 +43,12 @@ python 00_install_final.py
 ```
 
 インストール内容:
-- transformers==4.36.2 (初期版)
-- tokenizers==0.15.0 (初期版)
+- transformers==4.36.2
+- tokenizers==0.15.0
 - bitsandbytes (GitHubから最新版)
 - peft==0.7.1
 - accelerate==0.25.0
-- trl==0.7.10 (初期版)
+- trl==0.7.10
 - datasets==2.16.1
 - scipy
 
@@ -240,7 +240,7 @@ python 04_train.py
 ```
 
 所要時間:
-- モデルダウンロード: 約5-10分 (初回のみ)
+- モデルダウンロード: 約5-10分
 - 学習: 約20-30分
 
 ### 3. 推論テスト
