@@ -1,0 +1,70 @@
+# ============================================================
+# Tech-Comply-AI 設定ファイル
+# ELYZA-japanese-Llama-2-7b ファインチューニング用
+# ============================================================
+
+# モデル設定
+model_name: "elyza/ELYZA-japanese-Llama-2-7b"
+new_model_name: "Tech-Comply-AI-v1"
+
+# データセット設定
+train_file_path: "./train_data_enhanced.jsonl"
+
+# 量子化設定 (4-bit QLoRA)
+bnb_config:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true  # メモリ効率化
+
+# LoRA設定
+peft_config:
+  r: 16  # LoRAランク (法律文書の複雑さに対応)
+  lora_alpha: 32  # スケーリングファクター (rの2倍推奨)
+  lora_dropout: 0.05  # ドロップアウト率
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:  # 学習対象のモジュール
+    - "q_proj"  # Query projection
+    - "v_proj"  # Value projection
+    - "k_proj"  # Key projection
+    - "o_proj"  # Output projection
+
+# 学習パラメータ
+training_arguments:
+  output_dir: "./results"  # 結果の保存先
+  num_train_epochs: 3  # エポック数
+  per_device_train_batch_size: 1  # バッチサイズ (メモリに応じて調整)
+  gradient_accumulation_steps: 4  # 勾配累積ステップ数 (実質バッチサイズ = 1 x 4 = 4)
+  learning_rate: 2e-4  # 学習率
+  weight_decay: 0.001  # 重み減衰
+  fp16: true  # 混合精度学習
+  logging_steps: 5  # ログ出力頻度
+  save_strategy: "steps"  # 保存戦略
+  save_steps: 25  # チェックポイント保存頻度
+  max_grad_norm: 0.3  # 勾配クリッピング
+  warmup_ratio: 0.03  # ウォームアップ比率
+  group_by_length: true  # 長さによるグループ化
+  lr_scheduler_type: "cosine"  # 学習率スケジューラ
+
+# ============================================================
+# カスタマイズのヒント:
+# ============================================================
+#
+# メモリ不足の場合:
+#   per_device_train_batch_size: 1
+#   gradient_accumulation_steps: 8
+#
+# 学習時間を短縮したい場合:
+#   num_train_epochs: 1
+#
+# より高品質な学習:
+#   r: 32
+#   lora_alpha: 64
+#   num_train_epochs: 5
+#
+# A100 GPU使用時:
+#   per_device_train_batch_size: 2
+#   gradient_accumulation_steps: 2
+#
+# ============================================================

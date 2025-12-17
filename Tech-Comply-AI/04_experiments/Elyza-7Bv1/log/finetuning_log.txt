@@ -1,0 +1,111 @@
+import gc
+import torch
+
+# メモリクリア
+gc.collect()
+torch.cuda.empty_cache()
+
+print("=" * 70)
+print("ファインチューニング開始")
+print("=" * 70)
+print()
+
+# ファインチューニング実行
+!python train_finetuning.py --config_path config_base.yaml
+
+======================================================================
+ファインチューニング開始
+======================================================================
+
+2025-12-16 07:26:38.285104: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1765869998.305468    6914 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1765869998.311583    6914 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1765869998.326949    6914 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1765869998.326990    6914 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1765869998.326994    6914 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1765869998.326997    6914 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+======================================================================
+Config: config_base.yaml
+Model: elyza/ELYZA-japanese-Llama-2-7b
+Output: Tech-Comply-AI-v1
+======================================================================
+
+[1/6] モデルとトークナイザーを読み込んでいます...
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Loading checkpoint shards: 100% 2/2 [00:54<00:00, 27.37s/it]
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+✓ モデルとトークナイザーの読み込み完了
+
+[2/6] LoRA設定を適用しています...
+
+--- 学習可能パラメータ ---
+学習対象: 16,777,216 パラメータ
+全体:     3,517,190,144 パラメータ
+学習率:   0.4770%
+----------------------------------------
+
+[3/6] データセットを読み込んでいます...
+✓ 34件のデータを読み込みました
+
+--- フォーマット済みプロンプトのサンプル ---
+<s>[INST] <<SYS>>
+あなたは日本の法律とコンプライアンスに精通した専門アシスタントです。景品表示法、個人情報保護法、著作権法などに基づいて、正確で実用的なアドバイスを提供してください。
+<</SYS>>
+
+あなたはWebサービス開発を支援する法務アシスタントです。入力された広告文に対し、景品表示法に基づくリスク判定、理由、および修正案をJSON形式で回答してください。
+
+入力:
+「今だけ完全無料！※」というバナーを出したい。※の注釈で「初回登録から30分間のみ」と小さく書く予定。 [/INST] {
+  "リスクレベル": "高",
+  "該当法": "景品表示法（有利誤認表示）",
+  "理由": "「完全無料」と強調しながら、実際には「30分間のみ」という制限がある場合、消費者に誤解を与える可能性があります。打ち消し表示（注釈）が目立たない場合、ガイドラインに抵触します。",
+  "修正案": "「初回30分 無料！」と、制限事項をメインの文言と同じ大きさで明記する。"
+} </s>
+----------------------------------------------------------------------
+
+[4/6] 学習の準備をしています...
+Map: 100% 34/34 [00:00<00:00, 438.64 examples/s]
+/usr/local/lib/python3.12/dist-packages/accelerate/accelerator.py:450: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self.scaler = torch.cuda.amp.GradScaler(**kwargs)
+✓ 学習の準備完了
+
+[5/6] 学習を開始します...
+======================================================================
+ℹ️  学習には数時間かかる場合があります
+ℹ️  進捗はログで確認できます
+======================================================================
+
+  0% 0/24 [00:00<?, ?it/s]/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py:1044: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. Starting in PyTorch 2.9, calling checkpoint without use_reentrant will raise an exception. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+{'loss': 1.3146, 'grad_norm': 0.515611469745636, 'learning_rate': 0.00018544194045464886, 'epoch': 0.59}
+{'loss': 0.9747, 'grad_norm': 0.5536601543426514, 'learning_rate': 0.00013348796121709862, 'epoch': 1.18}
+{'loss': 0.7103, 'grad_norm': 0.8218761086463928, 'learning_rate': 6.651203878290139e-05, 'epoch': 1.76}
+{'loss': 0.581, 'grad_norm': 0.732771098613739, 'learning_rate': 1.4558059545351143e-05, 'epoch': 2.35}
+{'train_runtime': 161.8069, 'train_samples_per_second': 0.63, 'train_steps_per_second': 0.148, 'train_loss': 0.8337231874465942, 'epoch': 2.82}
+100% 24/24 [02:41<00:00,  6.74s/it]
+
+======================================================================
+✓ 学習が正常に完了しました!
+======================================================================
+
+[6/6] モデルを保存しています...
+✓ モデルを保存しました: ./results/final_adapter
+✓ Google Driveにも保存しました: /content/drive/MyDrive/Tech-Comply-AI-v1
+
+======================================================================
+🎉 すべての処理が完了しました!
+======================================================================
+
+📁 保存先: ./results/final_adapter
+📝 モデル名: Tech-Comply-AI-v1
+📊 学習データ: 34件
+📈 エポック数: 3
+
+次のステップ:
+1. inference.py で推論テスト
+2. モデルをZIP化してダウンロード
+3. 本番環境へデプロイ
+======================================================================
