@@ -1,0 +1,82 @@
+# ============================================================
+# Elyza-7B v4 設定ファイル
+# ============================================================
+
+# モデル設定
+model_name: "elyza/ELYZA-japanese-Llama-2-7b"
+new_model_name: "Elyza-7B-Compliance-Consultant-v4"
+
+# データセット設定
+train_file_path: "./train_data_v4.jsonl"  # 修復後のデータを使用
+
+# 量子化設定 (4-bit QLoRA)
+bnb_config:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+
+# LoRA設定（安定化のためランクを下げる）
+peft_config:
+  r: 16                    # 32 → 16（過学習を防ぐ）
+  lora_alpha: 32           # 64 → 32（ランクの2倍）
+  lora_dropout: 0.1        # 0.05 → 0.1（汎化性能向上）
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+# 学習パラメータ
+training_arguments:
+  output_dir: "./results_v4"
+  num_train_epochs: 5              # 3 → 5（十分な学習）
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 2e-4              # 5e-5 → 2e-4（学習を加速）
+  weight_decay: 0.01
+  fp16: true
+  logging_steps: 5                 # 10 → 5（細かく監視）
+  save_strategy: "steps"           # epoch → steps
+  save_steps: 50                   # 追加
+  eval_strategy: "steps"           # epoch → steps
+  eval_steps: 50                   # 追加
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"  # loss → eval_loss
+  max_grad_norm: 1.0               # 0.3 → 1.0（勾配の柔軟性向上）
+  warmup_steps: 10                 # warmup_ratio → warmup_steps
+  group_by_length: true
+  lr_scheduler_type: "cosine"
+  save_total_limit: 3              # 2 → 3
+
+# 推論パラメータ（新規追加）
+inference:
+  max_new_tokens: 512
+  temperature: 0.6                 # 法律文書として適切なバランス
+  top_p: 0.85                      # やや保守的に
+  top_k: 40                        # 候補を絞る
+  repetition_penalty: 1.15         
+  do_sample: true
+
+# ============================================================
+# v4の改善点:
+# ============================================================
+#
+# 1. LoRAランク削減: 過学習防止（r=32→16）
+# 2. 学習率向上: より効率的な学習（5e-5→2e-4）
+# 3. 評価頻度向上: epoch単位→step単位で細かく監視
+# 4. 推論パラメータ最適化: temperature 0.1→0.7
+# 5. プロンプト統一: 学習時と推論時で完全一致
+# 6. システムメッセージ強化: 構造化出力を強制
+#
+# 期待される改善:
+# - 推論の安定性向上
+# - 構造化された出力の一貫性
+# - 過学習の抑制
+#
+# ============================================================

@@ -1,0 +1,143 @@
+「過学習（Overfitting）」と「学習率の過剰」による「破滅的忘却（Catastrophic Forgetting）」の複合要因
+
+ログにある train_loss: 0.24 という数値は、たった135件のデータセットに対しては低すぎる。モデルは「法律の論理」を学習したのではなく、「学習データのテキストの並び」を丸暗記しようとして、元の言語モデルが持っていた論理能力（日本語のつながりや文脈理解）を破壊してしまった。
+
+【原因の特定】
+
+1. 学習率が高すぎる（最大の原因）
+
+　- 現状: learning_rate: 2e-4 (0.0002)
+
+　- 分析: 7Bパラメータのモデルに対し、わずか150件程度のデータでこの学習率は高すぎる。重みが急激に更新されすぎたため、モデルが元々持っていた知識が壊れ、法律用語をデタラメに並べる状態（ハルシネーション）になっている。
+
+　- 症状: 推論結果で「民法502条（信義則）」や「消費者契約法第13条」など、文脈と無関係な条文や用語が羅列されている。
+
+2. 学習データの丸暗記とEOSトークンの無視
+
+現状: 推論結果の末尾に 入力: 新作ゲームの... と続いてしまっています。
+
+分析: モデルが「回答が終わったら止まる（EOSトークンを出す）」ことを学習できず、「回答の次には、次の学習データの『入力:』が続く」というデータの並び順自体を学習してしまっています。
+
+症状: 生成が止まらず、学習データ内の別のデータを出力し始める。
+
+3. データ量に対するEpoch数のバランス
+
+現状: 5 Epoch
+分析: データが少ない場合、Epochを重ねるとすぐに過学習します。このデータ量なら、学習率を下げて丁寧に回す必要があります。
+
+手順1: config_v4.yaml の修正（最優先）
+
+学習率を1/4に下げ、正則化（weight_decay）を強め、LoRAのドロップアウトを増やして過学習を防ぎます。
+
+修正後の config_v4.yaml (training_arguments と peft_config 部分のみ抜粋)
+
+# LoRA設定
+peft_config:
+  r: 8                     # 16 → 8 に下げる（データが少ないためパラメータ数を絞る）
+  lora_alpha: 32           # そのまま
+  lora_dropout: 0.1        # そのまま（あるいは0.2に増やしても良い）
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+# 学習パラメータ
+training_arguments:
+  output_dir: "./results_v4_fix" # 出力ディレクトリを変更（混ざらないように）
+  num_train_epochs: 10             # 学習率を下げる分、エポックは少し増やす（様子見）
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4   # 8 → 4 (更新頻度を上げる)
+  learning_rate: 5e-5              # 【重要】2e-4 → 5e-5 に下げる
+  weight_decay: 0.05               # 0.01 → 0.05 (過学習抑制)
+  fp16: true
+  logging_steps: 5
+  save_strategy: "steps"
+  save_steps: 50
+  eval_strategy: "steps"
+  eval_steps: 50
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  max_grad_norm: 0.3               # 1.0 → 0.3 (勾配爆発を防ぐ)
+  warmup_steps: 20                 # ウォームアップを少し長く
+  group_by_length: true
+  lr_scheduler_type: "cosine"
+  save_total_limit: 3
+
+手順2: train_v4.py の修正（EOSトークンの明示）
+学習データを作成する際、EOSトークン（終了記号）が確実に学習されるように、トークナイザーの設定を再確認します。
+
+formatting_prompts_func の手前にあるトークナイザー設定部分を確認し、以下のように修正してください（特に変更がない場合もありますが、念のため）。
+
+# train_v4.py の該当箇所
+
+tokenizer = AutoTokenizer.from_pretrained(
+    config["model_name"],
+    trust_remote_code=True,
+    use_fast=False,
+)
+# ここ重要: pad_tokenをeos_tokenに設定
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = "right"
+
+# ↓ 追加: 明示的にEOSトークンIDを確認（デバッグ用）
+print(f"EOS Token ID: {tokenizer.eos_token_id}")
+
+手順3: inference_v4.py の修正（生成停止条件の強化）
+推論時に、モデルが暴走して「次の入力」まで喋り出さないように、強制的に止めるキーワードを設定します。
+
+inference_v4.py の generate_response メソッドを以下のように書き換えてください。
+
+def generate_response(self, instruction, input_text):
+        prompt = (
+            f"<s>[INST] <<SYS>>\n{self.system_message}\n<</SYS>>\n\n"
+            f"{instruction}\n\n入力:\n{input_text} [/INST]"
+        )
+        
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
+        
+        # 暴走防止: '入力:' という単語が出たらそこで打ち切る設定等は
+        # TransformersのStoppingCriteriaを使うのが正式ですが、
+        # 簡易的にはEOSトークンを信じるしかありません。
+        # ここではパラメータを少し保守的にします。
+
+        with torch.no_grad():
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=512,
+                do_sample=True,
+                temperature=0.3,       # 0.7 → 0.3 (ハルシネーション抑制のため低くする)
+                top_p=0.9,
+                repetition_penalty=1.2, # 繰り返しペナルティを少し強く
+                eos_token_id=self.tokenizer.eos_token_id,
+                pad_token_id=self.tokenizer.eos_token_id,
+            )
+        
+        response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        
+        if "[/INST]" in response:
+            response = response.split("[/INST]")[-1].strip()
+        
+        # 【追加対策】もしモデルが次の「入力:」まで生成していたら、そこで切り落とす
+        if "入力:" in response:
+            response = response.split("入力:")[0].strip()
+            
+        return response
+
+学習率 5e-5: 既存の日本語能力（文法や論理）を壊さずに、新しい知識（コンプライアンスのフォーマット）だけをそっと上書きします。
+
+temperature=0.3: 推論時の「創造性」を抑え、最も確実性の高い（学習データに近い）回答を選ばせることで、デタラメな法律用語の生成を防ぎます。
+
+事後処理: 万が一学習データが漏れ出しても、Python側で split("入力:") することで、ユーザーには綺麗な回答だけを見せることができます。
+
+次のアクション
+config_v4.yaml の学習率を 5e-5 に書き換えてください。
+
+再度 python train_v4.py を実行してください（モデルの保存先が変わるよう output_dir を変更するのを忘れずに）。
+
+学習完了後、inference_v4.py の生成パラメータ（temperature等）を調整した上で実行してください。

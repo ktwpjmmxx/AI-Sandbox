@@ -1,0 +1,332 @@
+======================================================================
+Elyza-7B v4 ファインチューニング開始
+======================================================================
+
+2025-12-22 02:03:31.873506: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1766369011.895404    4216 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1766369011.901580    4216 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1766369011.917915    4216 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1766369011.917946    4216 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1766369011.917950    4216 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1766369011.917954    4216 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+======================================================================
+Elyza-7B v4 ファインチューニング
+======================================================================
+Model: elyza/ELYZA-japanese-Llama-2-7b
+Output: Elyza-7B-Compliance-Consultant-v4
+Data: ./train_data_v4.jsonl
+======================================================================
+
+[1/7] モデルとトークナイザーを読み込んでいます...
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+config.json: 100% 632/632 [00:00<00:00, 4.72MB/s]
+pytorch_model.bin.index.json: 26.8kB [00:00, 52.2MB/s]
+Downloading shards:   0% 0/2 [00:00<?, ?it/s]
+pytorch_model-00001-of-00002.bin:   0% 0.00/9.98G [00:00<?, ?B/s]
+pytorch_model-00001-of-00002.bin:   0% 701k/9.98G [00:02<10:27:29, 265kB/s]
+pytorch_model-00001-of-00002.bin:   0% 2.14M/9.98G [00:03<3:52:48, 714kB/s]
+pytorch_model-00001-of-00002.bin:   0% 4.11M/9.98G [00:04<2:39:23, 1.04MB/s]
+pytorch_model-00001-of-00002.bin:   1% 71.2M/9.98G [00:05<06:52, 24.0MB/s]  
+pytorch_model-00001-of-00002.bin:   1% 138M/9.98G [00:06<03:59, 41.1MB/s] 
+pytorch_model-00001-of-00002.bin:   3% 272M/9.98G [00:07<02:41, 60.2MB/s]
+pytorch_model-00001-of-00002.bin:   3% 339M/9.98G [00:08<01:57, 81.8MB/s]
+pytorch_model-00001-of-00002.bin:   4% 406M/9.98G [00:08<01:26, 110MB/s] 
+pytorch_model-00001-of-00002.bin:   5% 474M/9.98G [00:08<01:05, 145MB/s]
+pytorch_model-00001-of-00002.bin:   5% 541M/9.98G [00:08<00:49, 189MB/s]
+pytorch_model-00001-of-00002.bin:   6% 608M/9.98G [00:08<00:43, 213MB/s]
+pytorch_model-00001-of-00002.bin:   7% 675M/9.98G [00:08<00:41, 225MB/s]
+pytorch_model-00001-of-00002.bin:   7% 742M/9.98G [00:09<00:39, 237MB/s]
+pytorch_model-00001-of-00002.bin:   8% 809M/9.98G [00:09<00:32, 281MB/s]
+pytorch_model-00001-of-00002.bin:   9% 876M/9.98G [00:09<00:34, 261MB/s]
+pytorch_model-00001-of-00002.bin:   9% 943M/9.98G [00:09<00:34, 263MB/s]
+pytorch_model-00001-of-00002.bin:  10% 1.01G/9.98G [00:10<00:34, 263MB/s]
+pytorch_model-00001-of-00002.bin:  11% 1.08G/9.98G [00:12<01:50, 80.3MB/s]
+pytorch_model-00001-of-00002.bin:  11% 1.14G/9.98G [00:12<01:22, 107MB/s] 
+pytorch_model-00001-of-00002.bin:  12% 1.21G/9.98G [00:12<01:10, 124MB/s]
+pytorch_model-00001-of-00002.bin:  13% 1.28G/9.98G [00:12<01:00, 144MB/s]
+pytorch_model-00001-of-00002.bin:  13% 1.35G/9.98G [00:13<01:06, 130MB/s]
+pytorch_model-00001-of-00002.bin:  14% 1.41G/9.98G [00:14<01:06, 128MB/s]
+pytorch_model-00001-of-00002.bin:  15% 1.48G/9.98G [00:14<00:59, 143MB/s]
+pytorch_model-00001-of-00002.bin:  16% 1.55G/9.98G [00:18<03:04, 45.6MB/s]
+pytorch_model-00001-of-00002.bin:  17% 1.68G/9.98G [00:18<01:49, 75.8MB/s]
+pytorch_model-00001-of-00002.bin:  18% 1.75G/9.98G [00:18<01:28, 92.9MB/s]
+pytorch_model-00001-of-00002.bin:  18% 1.82G/9.98G [00:19<01:09, 118MB/s] 
+pytorch_model-00001-of-00002.bin:  19% 1.88G/9.98G [00:19<00:59, 135MB/s]
+pytorch_model-00001-of-00002.bin:  20% 2.02G/9.98G [00:19<00:47, 168MB/s]
+pytorch_model-00001-of-00002.bin:  21% 2.09G/9.98G [00:20<00:42, 185MB/s]
+pytorch_model-00001-of-00002.bin:  22% 2.22G/9.98G [00:20<00:34, 227MB/s]
+pytorch_model-00001-of-00002.bin:  23% 2.29G/9.98G [00:20<00:33, 228MB/s]
+pytorch_model-00001-of-00002.bin:  24% 2.35G/9.98G [00:21<00:30, 248MB/s]
+pytorch_model-00001-of-00002.bin:  24% 2.42G/9.98G [00:21<00:30, 248MB/s]
+pytorch_model-00001-of-00002.bin:  25% 2.49G/9.98G [00:21<00:29, 251MB/s]
+pytorch_model-00001-of-00002.bin:  26% 2.55G/9.98G [00:21<00:29, 252MB/s]
+pytorch_model-00001-of-00002.bin:  26% 2.62G/9.98G [00:22<00:29, 249MB/s]
+pytorch_model-00001-of-00002.bin:  27% 2.69G/9.98G [00:23<01:13, 98.6MB/s]
+pytorch_model-00001-of-00002.bin:  28% 2.75G/9.98G [00:24<01:13, 98.8MB/s]
+pytorch_model-00001-of-00002.bin:  28% 2.83G/9.98G [00:24<00:59, 120MB/s] 
+pytorch_model-00001-of-00002.bin:  29% 2.89G/9.98G [00:25<00:51, 137MB/s]
+pytorch_model-00001-of-00002.bin:  30% 2.96G/9.98G [00:25<00:54, 128MB/s]
+pytorch_model-00001-of-00002.bin:  31% 3.09G/9.98G [00:26<00:46, 148MB/s]
+pytorch_model-00001-of-00002.bin:  32% 3.16G/9.98G [00:28<01:28, 77.4MB/s]
+pytorch_model-00001-of-00002.bin:  32% 3.23G/9.98G [00:28<01:08, 98.6MB/s]
+pytorch_model-00001-of-00002.bin:  33% 3.30G/9.98G [00:29<01:06, 101MB/s] 
+pytorch_model-00001-of-00002.bin:  34% 3.43G/9.98G [00:29<00:45, 145MB/s]
+pytorch_model-00001-of-00002.bin:  35% 3.50G/9.98G [00:30<00:40, 159MB/s]
+pytorch_model-00001-of-00002.bin:  36% 3.56G/9.98G [00:30<00:35, 182MB/s]
+pytorch_model-00001-of-00002.bin:  36% 3.63G/9.98G [00:30<00:33, 192MB/s]
+pytorch_model-00001-of-00002.bin:  37% 3.70G/9.98G [00:32<01:18, 79.7MB/s]
+pytorch_model-00001-of-00002.bin:  38% 3.83G/9.98G [00:33<00:49, 125MB/s] 
+pytorch_model-00001-of-00002.bin:  39% 3.90G/9.98G [00:33<00:42, 142MB/s]
+pytorch_model-00001-of-00002.bin:  40% 3.96G/9.98G [00:33<00:35, 171MB/s]
+pytorch_model-00001-of-00002.bin:  40% 4.03G/9.98G [00:34<00:41, 144MB/s]
+pytorch_model-00001-of-00002.bin:  41% 4.10G/9.98G [00:34<00:36, 159MB/s]
+pytorch_model-00001-of-00002.bin:  42% 4.17G/9.98G [00:38<02:13, 43.4MB/s]
+pytorch_model-00001-of-00002.bin:  43% 4.30G/9.98G [00:39<01:30, 63.0MB/s]
+pytorch_model-00001-of-00002.bin:  44% 4.37G/9.98G [00:39<01:11, 77.9MB/s]
+pytorch_model-00001-of-00002.bin:  44% 4.43G/9.98G [00:40<01:06, 83.1MB/s]
+pytorch_model-00001-of-00002.bin:  45% 4.50G/9.98G [00:42<01:38, 55.5MB/s]
+pytorch_model-00001-of-00002.bin:  46% 4.57G/9.98G [00:43<01:13, 73.5MB/s]
+pytorch_model-00001-of-00002.bin:  46% 4.64G/9.98G [00:43<00:59, 89.2MB/s]
+pytorch_model-00001-of-00002.bin:  47% 4.70G/9.98G [00:43<00:47, 111MB/s] 
+pytorch_model-00001-of-00002.bin:  48% 4.77G/9.98G [00:44<00:47, 109MB/s]
+pytorch_model-00001-of-00002.bin:  48% 4.84G/9.98G [00:44<00:46, 110MB/s]
+pytorch_model-00001-of-00002.bin:  49% 4.90G/9.98G [00:47<01:22, 61.3MB/s]
+pytorch_model-00001-of-00002.bin:  50% 4.97G/9.98G [00:47<01:03, 78.4MB/s]
+pytorch_model-00001-of-00002.bin:  50% 5.03G/9.98G [00:47<00:48, 101MB/s] 
+pytorch_model-00001-of-00002.bin:  51% 5.10G/9.98G [00:47<00:40, 122MB/s]
+pytorch_model-00001-of-00002.bin:  52% 5.17G/9.98G [00:48<00:36, 133MB/s]
+pytorch_model-00001-of-00002.bin:  52% 5.24G/9.98G [00:48<00:27, 170MB/s]
+pytorch_model-00001-of-00002.bin:  53% 5.30G/9.98G [00:48<00:27, 172MB/s]
+pytorch_model-00001-of-00002.bin:  54% 5.37G/9.98G [00:48<00:21, 213MB/s]
+pytorch_model-00001-of-00002.bin:  54% 5.44G/9.98G [00:49<00:23, 195MB/s]
+pytorch_model-00001-of-00002.bin:  55% 5.50G/9.98G [00:49<00:18, 240MB/s]
+pytorch_model-00001-of-00002.bin:  56% 5.57G/9.98G [00:49<00:17, 245MB/s]
+pytorch_model-00001-of-00002.bin:  57% 5.64G/9.98G [00:50<00:17, 246MB/s]
+pytorch_model-00001-of-00002.bin:  57% 5.71G/9.98G [00:50<00:18, 231MB/s]
+pytorch_model-00001-of-00002.bin:  58% 5.77G/9.98G [00:50<00:17, 247MB/s]
+pytorch_model-00001-of-00002.bin:  59% 5.84G/9.98G [00:51<00:21, 194MB/s]
+pytorch_model-00001-of-00002.bin:  59% 5.91G/9.98G [00:51<00:17, 232MB/s]
+pytorch_model-00001-of-00002.bin:  60% 5.97G/9.98G [00:51<00:16, 247MB/s]
+pytorch_model-00001-of-00002.bin:  61% 6.04G/9.98G [00:51<00:14, 277MB/s]
+pytorch_model-00001-of-00002.bin:  61% 6.11G/9.98G [00:52<00:16, 229MB/s]
+pytorch_model-00001-of-00002.bin:  62% 6.17G/9.98G [00:52<00:14, 256MB/s]
+pytorch_model-00001-of-00002.bin:  63% 6.24G/9.98G [00:52<00:12, 299MB/s]
+pytorch_model-00001-of-00002.bin:  63% 6.31G/9.98G [00:53<00:18, 197MB/s]
+pytorch_model-00001-of-00002.bin:  64% 6.38G/9.98G [00:53<00:15, 226MB/s]
+pytorch_model-00001-of-00002.bin:  65% 6.44G/9.98G [00:53<00:14, 248MB/s]
+pytorch_model-00001-of-00002.bin:  65% 6.51G/9.98G [00:53<00:18, 186MB/s]
+pytorch_model-00001-of-00002.bin:  66% 6.58G/9.98G [00:54<00:15, 215MB/s]
+pytorch_model-00001-of-00002.bin:  67% 6.64G/9.98G [00:54<00:14, 223MB/s]
+pytorch_model-00001-of-00002.bin:  67% 6.71G/9.98G [00:54<00:13, 247MB/s]
+pytorch_model-00001-of-00002.bin:  68% 6.78G/9.98G [00:54<00:12, 256MB/s]
+pytorch_model-00001-of-00002.bin:  69% 6.85G/9.98G [00:55<00:12, 258MB/s]
+pytorch_model-00001-of-00002.bin:  69% 6.91G/9.98G [00:55<00:16, 182MB/s]
+pytorch_model-00001-of-00002.bin:  70% 6.96G/9.98G [00:56<00:18, 167MB/s]
+pytorch_model-00001-of-00002.bin:  70% 7.03G/9.98G [00:56<00:17, 164MB/s]
+pytorch_model-00001-of-00002.bin:  71% 7.10G/9.98G [00:59<00:48, 59.3MB/s]
+pytorch_model-00001-of-00002.bin:  72% 7.17G/9.98G [00:59<00:34, 82.2MB/s]
+pytorch_model-00001-of-00002.bin:  72% 7.23G/9.98G [00:59<00:25, 106MB/s] 
+pytorch_model-00001-of-00002.bin:  73% 7.30G/9.98G [00:59<00:19, 140MB/s]
+pytorch_model-00001-of-00002.bin:  74% 7.37G/9.98G [01:00<00:16, 163MB/s]
+pytorch_model-00001-of-00002.bin:  75% 7.43G/9.98G [01:00<00:14, 171MB/s]
+pytorch_model-00001-of-00002.bin:  75% 7.50G/9.98G [01:00<00:12, 196MB/s]
+pytorch_model-00001-of-00002.bin:  76% 7.57G/9.98G [01:01<00:15, 156MB/s]
+pytorch_model-00001-of-00002.bin:  77% 7.63G/9.98G [01:01<00:15, 154MB/s]
+pytorch_model-00001-of-00002.bin:  77% 7.70G/9.98G [01:02<00:16, 138MB/s]
+pytorch_model-00001-of-00002.bin:  78% 7.77G/9.98G [01:02<00:16, 136MB/s]
+pytorch_model-00001-of-00002.bin:  79% 7.84G/9.98G [01:02<00:12, 177MB/s]
+pytorch_model-00001-of-00002.bin:  79% 7.90G/9.98G [01:03<00:10, 193MB/s]
+pytorch_model-00001-of-00002.bin:  80% 7.97G/9.98G [01:03<00:11, 178MB/s]
+pytorch_model-00001-of-00002.bin:  81% 8.04G/9.98G [01:09<00:59, 32.8MB/s]
+pytorch_model-00001-of-00002.bin:  81% 8.10G/9.98G [01:09<00:41, 44.6MB/s]
+pytorch_model-00001-of-00002.bin:  82% 8.17G/9.98G [01:10<00:31, 57.6MB/s]
+pytorch_model-00001-of-00002.bin:  83% 8.24G/9.98G [01:10<00:22, 76.0MB/s]
+pytorch_model-00001-of-00002.bin:  83% 8.31G/9.98G [01:10<00:18, 92.2MB/s]
+pytorch_model-00001-of-00002.bin:  84% 8.37G/9.98G [01:11<00:14, 109MB/s] 
+pytorch_model-00001-of-00002.bin:  85% 8.44G/9.98G [01:20<01:17, 19.8MB/s]
+pytorch_model-00001-of-00002.bin:  85% 8.51G/9.98G [01:25<01:24, 17.4MB/s]
+pytorch_model-00001-of-00002.bin:  86% 8.57G/9.98G [01:26<00:57, 24.5MB/s]
+pytorch_model-00001-of-00002.bin:  87% 8.64G/9.98G [01:27<00:47, 28.4MB/s]
+pytorch_model-00001-of-00002.bin:  87% 8.71G/9.98G [01:32<00:57, 22.2MB/s]
+pytorch_model-00001-of-00002.bin:  89% 8.84G/9.98G [01:32<00:28, 39.6MB/s]
+pytorch_model-00001-of-00002.bin:  89% 8.91G/9.98G [01:33<00:24, 43.5MB/s]
+pytorch_model-00001-of-00002.bin:  90% 8.98G/9.98G [01:38<00:35, 28.1MB/s]
+pytorch_model-00001-of-00002.bin:  91% 9.04G/9.98G [01:38<00:24, 37.8MB/s]
+pytorch_model-00001-of-00002.bin:  91% 9.11G/9.98G [01:38<00:17, 49.5MB/s]
+pytorch_model-00001-of-00002.bin:  92% 9.18G/9.98G [01:38<00:12, 64.1MB/s]
+pytorch_model-00001-of-00002.bin:  93% 9.24G/9.98G [01:39<00:08, 81.9MB/s]
+pytorch_model-00001-of-00002.bin:  93% 9.31G/9.98G [01:39<00:06, 103MB/s] 
+pytorch_model-00001-of-00002.bin:  94% 9.38G/9.98G [01:39<00:04, 125MB/s]
+pytorch_model-00001-of-00002.bin:  95% 9.45G/9.98G [01:39<00:03, 146MB/s]
+pytorch_model-00001-of-00002.bin:  95% 9.51G/9.98G [01:40<00:02, 168MB/s]
+pytorch_model-00001-of-00002.bin:  96% 9.58G/9.98G [01:40<00:02, 180MB/s]
+pytorch_model-00001-of-00002.bin:  97% 9.64G/9.98G [01:40<00:01, 199MB/s]
+pytorch_model-00001-of-00002.bin:  97% 9.71G/9.98G [01:41<00:01, 219MB/s]
+pytorch_model-00001-of-00002.bin:  98% 9.78G/9.98G [01:41<00:00, 220MB/s]
+pytorch_model-00001-of-00002.bin:  99% 9.84G/9.98G [01:41<00:00, 235MB/s]
+pytorch_model-00001-of-00002.bin:  99% 9.91G/9.98G [01:41<00:00, 236MB/s]
+pytorch_model-00001-of-00002.bin: 100% 9.98G/9.98G [01:42<00:00, 97.4MB/s]
+Downloading shards:  50% 1/2 [01:42<01:42, 102.98s/it]
+pytorch_model-00002-of-00002.bin:   0% 0.00/3.50G [00:00<?, ?B/s]
+pytorch_model-00002-of-00002.bin:   0% 688k/3.50G [00:01<2:28:23, 393kB/s]
+pytorch_model-00002-of-00002.bin:   0% 1.98M/3.50G [00:02<1:10:32, 826kB/s]
+pytorch_model-00002-of-00002.bin:   0% 3.98M/3.50G [00:04<51:14, 1.14MB/s] 
+pytorch_model-00002-of-00002.bin:   2% 71.0M/3.50G [00:04<02:05, 27.3MB/s]
+pytorch_model-00002-of-00002.bin:   4% 138M/3.50G [00:05<01:15, 44.6MB/s] 
+pytorch_model-00002-of-00002.bin:   6% 205M/3.50G [00:05<00:44, 74.2MB/s]
+pytorch_model-00002-of-00002.bin:   8% 272M/3.50G [00:06<00:39, 81.2MB/s]
+pytorch_model-00002-of-00002.bin:  10% 339M/3.50G [00:10<01:32, 34.0MB/s]
+pytorch_model-00002-of-00002.bin:  12% 406M/3.50G [00:11<01:21, 37.9MB/s]
+pytorch_model-00002-of-00002.bin:  14% 473M/3.50G [00:11<00:56, 54.0MB/s]
+pytorch_model-00002-of-00002.bin:  15% 541M/3.50G [00:12<00:42, 69.5MB/s]
+pytorch_model-00002-of-00002.bin:  17% 607M/3.50G [00:12<00:32, 90.0MB/s]
+pytorch_model-00002-of-00002.bin:  19% 675M/3.50G [00:12<00:25, 112MB/s] 
+pytorch_model-00002-of-00002.bin:  21% 742M/3.50G [00:12<00:20, 134MB/s]
+pytorch_model-00002-of-00002.bin:  23% 809M/3.50G [00:13<00:17, 152MB/s]
+pytorch_model-00002-of-00002.bin:  25% 876M/3.50G [00:15<00:33, 78.4MB/s]
+pytorch_model-00002-of-00002.bin:  27% 943M/3.50G [00:19<01:17, 32.9MB/s]
+pytorch_model-00002-of-00002.bin:  29% 1.02G/3.50G [00:20<00:52, 47.1MB/s]
+pytorch_model-00002-of-00002.bin:  31% 1.09G/3.50G [00:21<00:46, 52.3MB/s]
+pytorch_model-00002-of-00002.bin:  33% 1.16G/3.50G [00:21<00:36, 64.7MB/s]
+pytorch_model-00002-of-00002.bin:  35% 1.22G/3.50G [00:21<00:27, 82.0MB/s]
+pytorch_model-00002-of-00002.bin:  37% 1.29G/3.50G [00:22<00:24, 91.2MB/s]
+pytorch_model-00002-of-00002.bin:  39% 1.36G/3.50G [00:22<00:18, 118MB/s] 
+pytorch_model-00002-of-00002.bin:  41% 1.43G/3.50G [00:28<01:02, 33.0MB/s]
+pytorch_model-00002-of-00002.bin:  45% 1.56G/3.50G [00:28<00:36, 53.7MB/s]
+pytorch_model-00002-of-00002.bin:  46% 1.63G/3.50G [00:36<01:22, 22.6MB/s]
+pytorch_model-00002-of-00002.bin:  48% 1.69G/3.50G [00:37<01:06, 27.3MB/s]
+pytorch_model-00002-of-00002.bin:  52% 1.83G/3.50G [00:38<00:37, 44.2MB/s]
+pytorch_model-00002-of-00002.bin:  54% 1.89G/3.50G [00:38<00:29, 55.0MB/s]
+pytorch_model-00002-of-00002.bin:  56% 1.96G/3.50G [00:38<00:22, 68.6MB/s]
+pytorch_model-00002-of-00002.bin:  58% 2.03G/3.50G [00:39<00:17, 84.4MB/s]
+pytorch_model-00002-of-00002.bin:  60% 2.09G/3.50G [00:39<00:13, 103MB/s] 
+pytorch_model-00002-of-00002.bin:  62% 2.16G/3.50G [00:39<00:10, 126MB/s]
+pytorch_model-00002-of-00002.bin:  64% 2.23G/3.50G [00:39<00:08, 144MB/s]
+pytorch_model-00002-of-00002.bin:  66% 2.29G/3.50G [00:40<00:07, 166MB/s]
+pytorch_model-00002-of-00002.bin:  67% 2.36G/3.50G [00:40<00:06, 185MB/s]
+pytorch_model-00002-of-00002.bin:  69% 2.43G/3.50G [00:40<00:05, 195MB/s]
+pytorch_model-00002-of-00002.bin:  71% 2.49G/3.50G [00:40<00:04, 219MB/s]
+pytorch_model-00002-of-00002.bin:  73% 2.56G/3.50G [00:41<00:04, 225MB/s]
+pytorch_model-00002-of-00002.bin:  75% 2.63G/3.50G [00:41<00:03, 234MB/s]
+pytorch_model-00002-of-00002.bin:  77% 2.70G/3.50G [00:41<00:03, 245MB/s]
+pytorch_model-00002-of-00002.bin:  79% 2.76G/3.50G [00:42<00:03, 244MB/s]
+pytorch_model-00002-of-00002.bin:  81% 2.83G/3.50G [00:42<00:02, 247MB/s]
+pytorch_model-00002-of-00002.bin:  83% 2.90G/3.50G [00:42<00:02, 255MB/s]
+pytorch_model-00002-of-00002.bin:  85% 2.96G/3.50G [00:42<00:02, 253MB/s]
+pytorch_model-00002-of-00002.bin:  87% 3.03G/3.50G [00:43<00:02, 223MB/s]
+pytorch_model-00002-of-00002.bin:  88% 3.10G/3.50G [00:43<00:01, 218MB/s]
+pytorch_model-00002-of-00002.bin:  90% 3.16G/3.50G [00:43<00:01, 247MB/s]
+pytorch_model-00002-of-00002.bin:  92% 3.23G/3.50G [00:44<00:01, 223MB/s]
+pytorch_model-00002-of-00002.bin:  94% 3.30G/3.50G [00:44<00:00, 224MB/s]
+pytorch_model-00002-of-00002.bin:  96% 3.37G/3.50G [00:44<00:00, 231MB/s]
+pytorch_model-00002-of-00002.bin:  98% 3.43G/3.50G [00:51<00:02, 31.3MB/s]
+pytorch_model-00002-of-00002.bin: 100% 3.50G/3.50G [01:02<00:00, 56.2MB/s]
+Downloading shards: 100% 2/2 [02:45<00:00, 82.91s/it]
+Loading checkpoint shards: 100% 2/2 [01:03<00:00, 31.90s/it]
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+generation_config.json: 100% 154/154 [00:00<00:00, 1.28MB/s]
+tokenizer_config.json: 100% 725/725 [00:00<00:00, 5.89MB/s]
+tokenizer.model: 100% 500k/500k [00:01<00:00, 314kB/s]
+special_tokens_map.json: 100% 437/437 [00:00<00:00, 4.34MB/s]
+tokenizer.json: 1.84MB [00:00, 109MB/s]
+✓ 完了
+
+[2/7] LoRA設定を適用しています...
+学習対象: 39,976,960 パラメータ
+全体: 3,540,389,888 パラメータ
+LoRAランク: 16
+
+[3/7] データセットを読み込んでいます...
+Generating train split: 150 examples [00:00, 1558.68 examples/s]
+✓ 150件のデータを読み込みました
+  - 訓練: 135件
+  - 評価: 15件
+
+[4/7] 学習の準備をしています...
+Map: 100% 135/135 [00:00<00:00, 945.76 examples/s]
+Map: 100% 15/15 [00:00<00:00, 492.19 examples/s]
+/usr/local/lib/python3.12/dist-packages/accelerate/accelerator.py:450: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self.scaler = torch.cuda.amp.GradScaler(**kwargs)
+✓ 準備完了
+
+--- v4の改善点 ---
+1. システムメッセージを学習データと完全一致
+2. 修正案の空白問題に対応（train_data_fixed.jsonl使用）
+3. LoRAランク: 16（過学習防止）
+4. 学習率: 2e-4（効率的な学習）
+5. 評価: step単位で細かく監視
+
+[5/7] 学習を開始します...
+======================================================================
+推定時間: T4 6-10時間, A100 2-4時間
+======================================================================
+  0% 0/80 [00:00<?, ?it/s]/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py:1044: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. Starting in PyTorch 2.9, calling checkpoint without use_reentrant will raise an exception. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+{'loss': 1.6294, 'grad_norm': 0.6307159066200256, 'learning_rate': 0.0001, 'epoch': 0.3}
+{'loss': 1.1982, 'grad_norm': 0.6709511876106262, 'learning_rate': 0.0002, 'epoch': 0.59}
+{'loss': 0.7087, 'grad_norm': 0.6223025918006897, 'learning_rate': 0.00019749279121818235, 'epoch': 0.89}
+{'loss': 0.5653, 'grad_norm': 0.6711771488189697, 'learning_rate': 0.0001900968867902419, 'epoch': 1.19}
+{'loss': 0.4737, 'grad_norm': 0.5473783612251282, 'learning_rate': 0.000178183148246803, 'epoch': 1.48}
+{'loss': 0.4522, 'grad_norm': 0.5117095708847046, 'learning_rate': 0.00016234898018587337, 'epoch': 1.78}
+{'loss': 0.4315, 'grad_norm': 0.35444268584251404, 'learning_rate': 0.00014338837391175582, 'epoch': 2.07}
+{'loss': 0.3639, 'grad_norm': 0.5426785945892334, 'learning_rate': 0.00012225209339563145, 'epoch': 2.37}
+{'loss': 0.3545, 'grad_norm': 0.47763699293136597, 'learning_rate': 0.0001, 'epoch': 2.67}
+{'loss': 0.3301, 'grad_norm': 0.4974118173122406, 'learning_rate': 7.774790660436858e-05, 'epoch': 2.96}
+ 62% 50/80 [13:05<07:58, 15.94s/it]
+  0% 0/15 [00:00<?, ?it/s]
+ 13% 2/15 [00:00<00:04,  3.06it/s]
+ 20% 3/15 [00:01<00:05,  2.28it/s]
+ 27% 4/15 [00:01<00:05,  1.94it/s]
+ 33% 5/15 [00:02<00:05,  1.80it/s]
+ 40% 6/15 [00:03<00:05,  1.74it/s]
+ 47% 7/15 [00:03<00:04,  1.67it/s]
+ 53% 8/15 [00:04<00:04,  1.65it/s]
+ 60% 9/15 [00:05<00:03,  1.64it/s]
+ 67% 10/15 [00:05<00:03,  1.61it/s]
+ 73% 11/15 [00:06<00:02,  1.61it/s]
+ 80% 12/15 [00:06<00:01,  1.60it/s]
+ 87% 13/15 [00:07<00:01,  1.59it/s]
+ 93% 14/15 [00:08<00:00,  1.60it/s]
+                                   
+{'eval_loss': 0.4358994662761688, 'eval_runtime': 9.4269, 'eval_samples_per_second': 1.591, 'eval_steps_per_second': 1.591, 'epoch': 2.96}
+ 62% 50/80 [13:15<07:58, 15.94s/it]
+100% 15/15 [00:08<00:00,  1.59it/s]
+                                   /usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py:1044: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. Starting in PyTorch 2.9, calling checkpoint without use_reentrant will raise an exception. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+{'loss': 0.2845, 'grad_norm': 0.39177680015563965, 'learning_rate': 5.6611626088244194e-05, 'epoch': 3.26}
+{'loss': 0.2861, 'grad_norm': 0.44514915347099304, 'learning_rate': 3.7651019814126654e-05, 'epoch': 3.56}
+{'loss': 0.2789, 'grad_norm': 0.38454100489616394, 'learning_rate': 2.181685175319702e-05, 'epoch': 3.85}
+{'loss': 0.2616, 'grad_norm': 0.38410085439682007, 'learning_rate': 9.903113209758096e-06, 'epoch': 4.15}
+{'loss': 0.2444, 'grad_norm': 0.37552201747894287, 'learning_rate': 2.5072087818176382e-06, 'epoch': 4.44}
+{'loss': 0.2473, 'grad_norm': 0.38619092106819153, 'learning_rate': 0.0, 'epoch': 4.74}
+{'train_runtime': 1278.9116, 'train_samples_per_second': 0.528, 'train_steps_per_second': 0.063, 'train_loss': 0.5068921834230423, 'epoch': 4.74}
+100% 80/80 [21:18<00:00, 15.99s/it]
+
+✓ 学習完了!
+
+[6/7] モデルを保存しています...
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+✓ 保存完了: ./results_v4/final_adapter
+✓ Google Driveにも保存: /content/drive/MyDrive/Elyza-7B-Compliance-Consultant-v4
+
+[7/7] 完了!
+
+======================================================================
+Elyza-7B v4 学習完了!
+======================================================================
+
+保存先: ./results_v4/final_adapter
+エポック数: 5
+
+期待される改善:
+✓ 修正案が必ず出力される
+✓ フォーマットの一貫性が向上
+✓ 過学習を抑制（LoRAランク16）
+
+次のステップ:
+python inference_v4.py --adapter_path ./results_v4/final_adapter
+======================================================================

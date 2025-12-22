@@ -1,0 +1,70 @@
+# ============================================================
+# Elyza-7B v3 設定ファイル
+# ============================================================
+
+# モデル設定
+model_name: "elyza/ELYZA-japanese-Llama-2-7b"
+new_model_name: "Elyza-7B-Compliance-Consultant"
+
+# データセット設定
+train_file_path: "./train_data_natural_language.jsonl"
+
+# 量子化設定 (4-bit QLoRA)
+bnb_config:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+
+# LoRA設定
+peft_config:
+  r: 32
+  lora_alpha: 64
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+# 学習パラメータ
+training_arguments:
+  output_dir: "./results_consultant_v1"
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 5e-5
+  weight_decay: 0.01
+  fp16: true
+  logging_steps: 10
+  save_strategy: "epoch"
+  eval_strategy: "epoch"
+  load_best_model_at_end: true
+  metric_for_best_model: "loss"
+  max_grad_norm: 0.3
+  warmup_ratio: 0.05
+  group_by_length: true
+  lr_scheduler_type: "cosine"
+  save_total_limit: 2
+
+# ============================================================
+# v3の改善点:
+# ============================================================
+#
+# 1. データ: JSON形式を厳密化（余計なテキストなし）
+# 2. エポック数: 5 → 7（より深く学習）
+# 3. 学習率: 1e-4 → 8e-5（より安定）
+# 4. プロンプト: JSON以外の出力を厳格に禁止
+# 5. 推論: temperature 0.7 → 0.3（安定性重視）
+# 6. 推論: repetition_penalty 1.1 → 1.15（繰り返し抑制強化）
+#
+# 期待される改善:
+# - JSON形式遵守率: 0% → 90%以上
+# - 余計なテキスト出力: なし
+#
+# ============================================================

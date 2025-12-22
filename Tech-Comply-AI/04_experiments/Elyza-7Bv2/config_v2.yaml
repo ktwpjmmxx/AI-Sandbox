@@ -1,0 +1,77 @@
+# ============================================================
+# Tech-Comply-AI v2 設定ファイル
+# ELYZA-japanese-Llama-2-7b ファインチューニング用
+# ============================================================
+
+# モデル設定
+model_name: "elyza/ELYZA-japanese-Llama-2-7b"
+new_model_name: "Tech-Comply-AI-v2"
+
+# データセット設定
+train_file_path: "./train_data_v2_150samples.jsonl"
+
+# 量子化設定 (4-bit QLoRA)
+bnb_config:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+
+# LoRA設定 (v2で最適化)
+peft_config:
+  r: 32  # 16 → 32: より多くのパラメータで学習
+  lora_alpha: 64  # 32 → 64: rの2倍
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"  # 追加: より広範囲を学習
+    - "up_proj"    # 追加
+    - "down_proj"  # 追加
+
+# 学習パラメータ (v2で最適化)
+training_arguments:
+  output_dir: "./results_v2"
+  num_train_epochs: 5  # 3 → 5: より長く学習
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8  # 4 → 8: 実質バッチサイズ8
+  learning_rate: 1e-4  # 2e-4 → 1e-4: より慎重に学習
+  weight_decay: 0.01  # 0.001 → 0.01: 過学習を抑制
+  fp16: true
+  logging_steps: 10  # 5 → 10: ログ頻度調整
+  save_strategy: "steps"
+  save_steps: 50  # 25 → 50: チェックポイント頻度調整
+  eval_strategy: "steps"  # 新規追加: 評価を実施
+  eval_steps: 50  # 評価頻度
+  load_best_model_at_end: true  # 最良モデルをロード
+  metric_for_best_model: "loss"  # 評価指標
+  max_grad_norm: 0.3
+  warmup_ratio: 0.05  # 0.03 → 0.05: ウォームアップ期間延長
+  warmup_steps: 0
+  group_by_length: true
+  lr_scheduler_type: "cosine"
+  save_total_limit: 3  # 新規追加: 最新3つのチェックポイントのみ保存
+
+# ============================================================
+# v2の改善点:
+# ============================================================
+#
+# 1. データ: 35件 → 150件
+# 2. LoRAランク: 16 → 32 (学習能力向上)
+# 3. 学習対象モジュール: 4つ → 7つ (より広範囲)
+# 4. エポック数: 3 → 5 (より深く学習)
+# 5. 学習率: 2e-4 → 1e-4 (安定性向上)
+# 6. バッチサイズ: 実質4 → 8 (安定性向上)
+# 7. 評価機能追加: 学習中に性能モニタリング
+# 8. ベストモデル保存: 最良の性能時点を保存
+#
+# 期待される改善:
+# - JSON形式の遵守率: 40% → 85%以上
+# - 回答の完結性: 向上
+# - 法律知識の精度: 向上
+#
+# ============================================================
