@@ -1,0 +1,36 @@
+# ============================================================
+# Elyza-7B Unsloth Config v6
+# データ量: 500件 / エポック数: 2 / max_seq_length: 2048
+# ============================================================
+
+model_name: "elyza/ELYZA-japanese-Llama-2-7b-instruct"
+new_model_name: "Elyza-7B-Compliance-Consultant-v6-Unsloth"
+train_file_path: "./train_data_v6.jsonl"
+
+peft_config:
+  r: 16
+  lora_alpha: 32
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+training_arguments:
+  output_dir: "./results_unsloth"
+  num_train_epochs: 2  # v5の3から2に削減(データ量増加のため)
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 0.00008  # v5の0.0001から微減(8e-5)
+  warmup_steps: 20  # v5の10から20に増加
+  logging_steps: 1
+  save_steps: 100  # v5の50から100に増加
+  max_seq_length: 2048  # v5の1024から2048に増加
+
+inference:
+  max_new_tokens: 1024
+  temperature: 0.6
+  top_p: 0.9
