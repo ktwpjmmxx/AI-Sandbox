@@ -1,0 +1,110 @@
+from unsloth import FastLanguageModel
+import torch
+
+target_checkpoint = "outputs_v7/checkpoint-30" 
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = target_checkpoint,
+    max_seq_length = 2048,
+    load_in_4bit = True,
+    device_map = "cuda",
+)
+FastLanguageModel.for_inference(model)
+
+
+instruction = "IT法務コンサルタントとして回答してください。"
+input_text = "弊社の新しいサービスのロゴが、他社の商標を侵害しているかどうか判定してください。"
+
+prompt = f"""### 指示:
+{instruction}
+
+### 入力:
+{input_text}
+
+### 応答:
+"""
+
+inputs = tokenizer([prompt], return_tensors = "pt").to("cuda")
+outputs = model.generate(**inputs, max_new_tokens = 512, use_cache = True)
+result = tokenizer.batch_decode(outputs)
+
+print("-" * 50)
+print(result[0].split("### 応答:")[1].replace("</s>", "").strip())
+print("-" * 50)
+
+==((====))==  Unsloth 2025.12.9: Fast Llama patching. Transformers: 4.57.3.
+   \\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.9.1+cu128. CUDA: 7.5. CUDA Toolkit: 12.8. Triton: 3.5.1
+\        /    Bfloat16 = FALSE. FA [Xformers = None. FA2 = False]
+ "-____-"     Free license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100%
+ 2/2 [01:11<00:00, 32.36s/it]
+Some weights of the model checkpoint at elyza/ELYZA-japanese-Llama-2-7b-instruct were not used when initializing LlamaForCausalLM: ['model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.16.self_attn.rotary_emb.inv_freq', 'model.layers.17.self_attn.rotary_emb.inv_freq', 'model.layers.18.self_attn.rotary_emb.inv_freq', 'model.layers.19.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.20.self_attn.rotary_emb.inv_freq', 'model.layers.21.self_attn.rotary_emb.inv_freq', 'model.layers.22.self_attn.rotary_emb.inv_freq', 'model.layers.23.self_attn.rotary_emb.inv_freq', 'model.layers.24.self_attn.rotary_emb.inv_freq', 'model.layers.25.self_attn.rotary_emb.inv_freq', 'model.layers.26.self_attn.rotary_emb.inv_freq', 'model.layers.27.self_attn.rotary_emb.inv_freq', 'model.layers.28.self_attn.rotary_emb.inv_freq', 'model.layers.29.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.30.self_attn.rotary_emb.inv_freq', 'model.layers.31.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq']
+- This IS expected if you are initializing LlamaForCausalLM from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing LlamaForCausalLM from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+elyza/ELYZA-japanese-Llama-2-7b-instruct does not have a padding token! Will use pad_token = <unk>.
+--------------------------------------------------
+ロゴの詳細を見てみないと正確な判定ができません。また、商標侵害の具体的な定義は国によって異なります。ご自身での審査をお願いします。
+
+### 出力:
+ロゴの詳細を見てみないと正確な判定ができません。また、商標侵害の具体的な定義は国によって異なります。ご自身での審査をお願いします。
+
+### 注意:
+ロゴの詳細を見て判定してください。商標侵害の具体的な定義は国によって異なります。ご自身での審査をお願いします。
+--------------------------------------------------
+
+
+
+
+
+
+
+
+🦥 Unsloth: Will patch your computer to enable 2x faster free finetuning.
+2025-12-26 02:38:23.739031: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1766716703.820879   40478 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1766716703.847506   40478 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1766716703.937646   40478 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1766716703.937686   40478 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1766716703.937703   40478 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1766716703.937710   40478 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+🦥 Unsloth Zoo will now patch everything to make training faster!
+Unsloth: Could not import trl.trainer.alignprop_trainer: Failed to import trl.trainer.alignprop_trainer because of the following error (look up to see its traceback):
+Failed to import trl.models.modeling_sd_base because of the following error (look up to see its traceback):
+peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.
+Unsloth: Could not import trl.trainer.ddpo_trainer: Failed to import trl.trainer.ddpo_trainer because of the following error (look up to see its traceback):
+Failed to import trl.models.modeling_sd_base because of the following error (look up to see its traceback):
+peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.
+==((====))==  Unsloth 2025.12.9: Fast Llama patching. Transformers: 4.57.3.
+   \\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.9.1+cu128. CUDA: 7.5. CUDA Toolkit: 12.8. Triton: 3.5.1
+\        /    Bfloat16 = FALSE. FA [Xformers = None. FA2 = False]
+ "-____-"     Free license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100% 2/2 [01:02<00:00, 31.32s/it]
+Some weights of the model checkpoint at elyza/ELYZA-japanese-Llama-2-7b-instruct were not used when initializing LlamaForCausalLM: ['model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.16.self_attn.rotary_emb.inv_freq', 'model.layers.17.self_attn.rotary_emb.inv_freq', 'model.layers.18.self_attn.rotary_emb.inv_freq', 'model.layers.19.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.20.self_attn.rotary_emb.inv_freq', 'model.layers.21.self_attn.rotary_emb.inv_freq', 'model.layers.22.self_attn.rotary_emb.inv_freq', 'model.layers.23.self_attn.rotary_emb.inv_freq', 'model.layers.24.self_attn.rotary_emb.inv_freq', 'model.layers.25.self_attn.rotary_emb.inv_freq', 'model.layers.26.self_attn.rotary_emb.inv_freq', 'model.layers.27.self_attn.rotary_emb.inv_freq', 'model.layers.28.self_attn.rotary_emb.inv_freq', 'model.layers.29.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.30.self_attn.rotary_emb.inv_freq', 'model.layers.31.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq']
+- This IS expected if you are initializing LlamaForCausalLM from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing LlamaForCausalLM from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+elyza/ELYZA-japanese-Llama-2-7b-instruct does not have a padding token! Will use pad_token = <unk>.
+Unsloth 2025.12.9 patched 32 layers with 32 QKV layers, 32 O layers and 32 MLP layers.
+--- 期待される回答（法務） ---
+IT法務コンサルタントとして、「利用者から不特定多数へ公開されているオープンソース・ウェブページやAPI」が、他人の知的所有権を無断で引き出せる可能性を持つ場合、その行為が直接または間接的に保護された作品の改変 (加工) に当たり、著作権侵害に見えるケースを判定してください。
+
+[理由]：一部の国では、GDPR等の民事補償制度も存在します。例えばドイツでは、ユーザーから取得した写真を勝手にAIで解析して教師データに活用した場合、被写体本人に10万€程度の損害賠償金を支払う義務が生じます。日本では同様の動向が期待されます。
+
+[修正案]：現時点では、大量の画像をスキャンして新たな機械学習パターンを探索する必要があった場合、最初に与えられた画像のみを使用してテスト実装を行い、後々のバージョンアップで再度、別の画像を集めて更新する方式が望ましいです。
+
+--- 期待される拒絶（範囲外） ---
+IT法務コンサルタントとして、リスクレベル「高」、該当法「デジタル・ネイティブ・エミュレーション法 (DNE)」、理由「不明確な制限付き参加条件が存在する可能性」、修正案「『参加者』や『ユーザー』等の意味合いを変えずに使用するか、もしくは特別な事情が無ければ一部の機能を除去します」と回答してください。
+
+
+
+
+
+
+
+
+
+

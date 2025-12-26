@@ -1,0 +1,34 @@
+# ============================================================
+# Elyza-7B Unsloth Config v7 (Legal Prison Mode)
+# データ量: 471件 (極致のクレンジング済み)
+# ============================================================
+
+model_name: "elyza/ELYZA-japanese-Llama-2-7b-instruct"
+new_model_name: "Elyza-7B-IT-Legal-v7"
+train_file_path: "./train_data_471.jsonl"
+
+peft_config:
+  r: 64
+  lora_alpha: 128
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+training_arguments:
+  output_dir: "./outputs_v7"
+  num_train_epochs: 10
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 0.00002  # 2e-5
+  warmup_steps: 10
+  logging_steps: 1
+  save_strategy: "epoch"
+  max_seq_length: 2048
+  weight_decay: 0.1
+  lr_scheduler_type: "cosine"
+  seed: 3407
