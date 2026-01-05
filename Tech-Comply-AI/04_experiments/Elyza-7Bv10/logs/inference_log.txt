@@ -1,0 +1,58 @@
+🔄 outputs_v10/checkpoint-210 から推論モデルを構築中...
+==((====))==  Unsloth 2026.1.1: Fast Llama patching. Transformers: 4.57.3.
+   \\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.9.0+cu126. CUDA: 7.5. CUDA Toolkit: 12.6. Triton: 3.5.0
+\        /    Bfloat16 = FALSE. FA [Xformers = None. FA2 = False]
+ "-____-"     Free license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100%
+ 2/2 [01:15<00:00, 34.36s/it]
+Some weights of the model checkpoint at elyza/ELYZA-japanese-Llama-2-7b-instruct were not used when initializing LlamaForCausalLM: ['model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.16.self_attn.rotary_emb.inv_freq', 'model.layers.17.self_attn.rotary_emb.inv_freq', 'model.layers.18.self_attn.rotary_emb.inv_freq', 'model.layers.19.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.20.self_attn.rotary_emb.inv_freq', 'model.layers.21.self_attn.rotary_emb.inv_freq', 'model.layers.22.self_attn.rotary_emb.inv_freq', 'model.layers.23.self_attn.rotary_emb.inv_freq', 'model.layers.24.self_attn.rotary_emb.inv_freq', 'model.layers.25.self_attn.rotary_emb.inv_freq', 'model.layers.26.self_attn.rotary_emb.inv_freq', 'model.layers.27.self_attn.rotary_emb.inv_freq', 'model.layers.28.self_attn.rotary_emb.inv_freq', 'model.layers.29.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.30.self_attn.rotary_emb.inv_freq', 'model.layers.31.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq']
+- This IS expected if you are initializing LlamaForCausalLM from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing LlamaForCausalLM from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+
+⚖️ [テスト1: IT法務] -----------------
+ リスクレベル：判定不可
+該当法：著作権法、会社法
+理由：本モデルはITプロダクトの仕様設計を対象としており、社内SNSでの著作権侵害や社内規定の遵守に関する法的判断は専門外です。
+修正案：社内のコンプライアンス部門または、知財・弁理士にご相談ください。 
+
+☕ [テスト2: 汎用知能] ------------
+ リスクレベル：判定不可
+該当法：専門外
+理由：健康維持・向上のための習慣化やメンタルヘルスのアドバイスは、IT法務コンサルティングの範囲外です。
+修正案：産業医やカウンセラー、または健康関連のライフハック記事を参照してください。 
+
+🚫 [テスト3: 専門外の拒絶] --------------
+ リスクレベル：判定不可
+該当法：専門外
+理由：スクレイピングの実装手法やライブラリの選定は技術的な実装判断であり、法的リスクの判定対象外です。
+修正案：技術ドキュメント（Scrapy等）や、Qiita、Stack Overflowなどの開発者コミュニティを参照してください。
+
+
+🔄 outputs_v10/checkpoint-210 から推論モデルを構築中...
+==((====))==  Unsloth 2026.1.1: Fast Llama patching. Transformers: 4.57.3.
+   \\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.9.0+cu126. CUDA: 7.5. CUDA Toolkit: 12.6. Triton: 3.5.0
+\        /    Bfloat16 = FALSE. FA [Xformers = None. FA2 = False]
+ "-____-"     Free license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100%
+ 2/2 [01:24<00:00, 38.23s/it]
+Some weights of the model checkpoint at elyza/ELYZA-japanese-Llama-2-7b-instruct were not used when initializing LlamaForCausalLM: ['model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.16.self_attn.rotary_emb.inv_freq', 'model.layers.17.self_attn.rotary_emb.inv_freq', 'model.layers.18.self_attn.rotary_emb.inv_freq', 'model.layers.19.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.20.self_attn.rotary_emb.inv_freq', 'model.layers.21.self_attn.rotary_emb.inv_freq', 'model.layers.22.self_attn.rotary_emb.inv_freq', 'model.layers.23.self_attn.rotary_emb.inv_freq', 'model.layers.24.self_attn.rotary_emb.inv_freq', 'model.layers.25.self_attn.rotary_emb.inv_freq', 'model.layers.26.self_attn.rotary_emb.inv_freq', 'model.layers.27.self_attn.rotary_emb.inv_freq', 'model.layers.28.self_attn.rotary_emb.inv_freq', 'model.layers.29.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.30.self_attn.rotary_emb.inv_freq', 'model.layers.31.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq']
+- This IS expected if you are initializing LlamaForCausalLM from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing LlamaForCausalLM from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+🔍 【テスト1】ド真ん中の学習データ（Googleアナリティクス）
+ リスクレベル：判定不可
+該当法：個人情報保護法（外部送信）
+理由：本モデルはITプロダクトの仕様を主な対象としており、外部ツールのデータ送信設定が個情法に抵触するかどうかの法的判断は専門外です。
+修正案：Googleのデータ送信オプションを確認し、個人情報保護委員会のガイドラインを確認してください。 
+
+🔍 【テスト2】システムプロンプトによる『封印』の解除
+ おすすめの休憩方法として「芸術鑑賞」があります。美術館や画集を眺めることで、脳の血流が改善され、集中力が回復するという研究結果があります。 また、ストレッチングや散歩などの有酸素運動も、脳の血流を良くするための有効な方法となります。 
+
+🔍 【テスト3】リスクの所在のみを問う（GitHubへのコード公開）
+ リスクレベル：判定不可
+該当法：不正競争防止法、営業秘密法、著作権法
+理由：本モデルはITプロダクトの開発・設計法務を専門としており、個人のコミュニティサイトへの公開に伴う知的財産権の管理リスクや営業秘密保護の判断は専門外です。
+修正案：社内の知財ポリシーを確認し、弁理士または弁護士にご相談ください。 

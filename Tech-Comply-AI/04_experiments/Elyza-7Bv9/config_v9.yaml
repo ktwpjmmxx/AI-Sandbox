@@ -1,0 +1,130 @@
+# ============================================================
+# Elyza-7B IT法務ファインチューニング設定ファイル v9
+# ============================================================
+# 成功構成 (v8ベース) - 2025年12月26日
+# 
+# この設定は以下の環境で動作確認済み:
+# - Google Colab (Tesla T4)
+# - Python 3.12
+# - CUDA 12.6
+# - Unsloth 2025.12.9
+# ============================================================
+
+# ===== モデル設定 =====
+model_name: "elyza/ELYZA-japanese-Llama-2-7b-instruct"
+new_model_name: "Elyza-7B-IT-Legal-v9"
+
+# ===== データ設定 =====
+train_file_path: "./train_data_471.jsonl"
+
+# ===== LoRA (Low-Rank Adaptation) 設定 =====
+peft_config:
+  # LoRAのランク (モデルの学習容量)
+  # 推奨: 64 (高品質) / 32 (軽量) / 128 (超高品質だがVRAM大)
+  r: 64
+  
+  # LoRAのアルファ値 (学習の強度)
+  # 推奨: lora_alpha = r × 2
+  lora_alpha: 128
+  
+  # ドロップアウト率 (過学習防止)
+  # 推奨: 0 (データが少ない場合) / 0.05 (データが多い場合)
+  lora_dropout: 0
+  
+  # LoRAを適用するモジュール
+  # Llama-2の全アテンション層とMLPに適用
+  target_modules:
+    - "q_proj"      # Query projection
+    - "k_proj"      # Key projection
+    - "v_proj"      # Value projection
+    - "o_proj"      # Output projection
+    - "gate_proj"   # Gate projection (MLP)
+    - "up_proj"     # Up projection (MLP)
+    - "down_proj"   # Down projection (MLP)
+
+# ===== トレーニング設定 =====
+training_arguments:
+  # 出力ディレクトリ
+  output_dir: "./outputs_v9"
+  
+  # エポック数 (データを何周学習するか)
+  # 推奨: 3 (標準) / 5 (高品質) / 1 (実験)
+  num_train_epochs: 3
+  
+  # デバイスごとのバッチサイズ
+  # Tesla T4: 4 / V100: 8 / A100: 16
+  per_device_train_batch_size: 4
+  
+  # 勾配累積ステップ (実効バッチサイズ = batch_size × gradient_accumulation_steps)
+  # 実効バッチサイズ: 4 × 4 = 16
+  gradient_accumulation_steps: 4
+  
+  # 学習率 (最も重要なハイパーパラメータ)
+  # 推奨: 1e-5 (安定) / 2e-5 (高速) / 5e-6 (慎重)
+  learning_rate: 0.00001  # 1e-5
+  
+  # ウォームアップステップ (学習率を徐々に上げる期間)
+  # 推奨: 10 (標準) / 50 (データが多い場合)
+  warmup_steps: 10
+  
+  # ログ出力の頻度 (何ステップごとにログを出力するか)
+  logging_steps: 1
+  
+  # 保存戦略 ("steps" or "epoch")
+  save_strategy: "steps"
+  
+  # 何ステップごとにモデルを保存するか
+  # 推奨: 5 (頻繁) / 10 (標準) / 20 (少なめ)
+  save_steps: 5
+  
+  # 最大シーケンス長 (トークン数)
+  # 推奨: 2048 (標準) / 4096 (長文) / 1024 (短文・高速)
+  max_seq_length: 2048
+  
+  # 重み減衰 (過学習防止の正則化)
+  # 推奨: 0.1 (標準) / 0.01 (軽い正則化) / 0 (正則化なし)
+  weight_decay: 0.1
+  
+  # 学習率スケジューラー
+  # 推奨: "cosine" (標準) / "linear" / "constant"
+  lr_scheduler_type: "cosine"
+  
+  # オプティマイザー
+  # 推奨: "adamw_8bit" (メモリ効率) / "adamw_torch" (標準) / "sgd" (軽量)
+  optim: "adamw_8bit"
+  
+  # レポート先 (wandb, tensorboard, none)
+  report_to: "none"
+  
+  # ランダムシード (再現性確保)
+  seed: 3407
+
+# ============================================================
+# ハイパーパラメータチューニングのガイド
+# ============================================================
+#
+# 【学習が不安定な場合】
+# - learning_rate を 5e-6 に下げる
+# - gradient_accumulation_steps を 8 に増やす
+# - warmup_steps を 50 に増やす
+#
+# 【過学習が疑われる場合】
+# - lora_dropout を 0.05 に設定
+# - weight_decay を 0.2 に増やす
+# - num_train_epochs を 2 に減らす
+#
+# 【学習が遅い場合】
+# - learning_rate を 2e-5 に上げる
+# - per_device_train_batch_size を 8 に増やす (VRAM許す限り)
+#
+# 【メモリ不足の場合】
+# - per_device_train_batch_size を 2 に下げる
+# - gradient_accumulation_steps を 8 に増やす (実効バッチサイズ維持)
+# - max_seq_length を 1024 に下げる
+#
+# 【より高品質なモデルを目指す場合】
+# - r を 128 に増やす (lora_alpha も 256 に)
+# - num_train_epochs を 5 に増やす
+# - learning_rate を 5e-6 に下げる (慎重に学習)
+#
+# ============================================================
