@@ -1,0 +1,37 @@
+model_config:
+  base_model: "elyza/ELYZA-japanese-Llama-2-7b-instruct"
+  load_in_4bit: true
+  max_seq_length: 2048
+  dtype: null # 自動設定
+
+lora_config:
+  r: 32
+  lora_alpha: 128 # rの4倍に設定。学習データへの追従性を最大化
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  lora_dropout: 0.0 # ゼロに設定。モデルの迷いを排除し、デトックス済みデータを直接反映
+  bias: "none"
+  use_gradient_checkpointing: "unsloth"
+  random_state: 3407
+
+training_config:
+  dataset_path: "traindata_v12.jsonl" # v11と同様の学習データ(ファイル名のみ変更)
+  output_dir: "outputs_v12"
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  warmup_steps: 5 # 10から5に短縮。早期から本格学習を開始する狙い
+  max_steps: -1
+  num_train_epochs: 3.0 # v10の成功例に倣い、3.0 epochで拒絶バイアスを塗り替える
+  learning_rate: 2e-4   # v10と同等の強度に引き上げ。知識の定着を優先
+  fp16: true
+  logging_steps: 1
+  optim: "adamw_8bit"
+  weight_decay: 0.01
+  lr_scheduler_type: "linear" # cosineからlinearに変更。v10で機能していたシンプルな減衰
+  seed: 3407
+  
+  # v12追加設定
+  save_strategy: "epoch" # エポックごとにチェックポイント保存
+  save_total_limit: 3     # 最新3つのチェックポイントを保持
+  load_best_model_at_end: false # 最終モデルを採用
+  metric_for_best_model: "loss"
+  greater_is_better: false

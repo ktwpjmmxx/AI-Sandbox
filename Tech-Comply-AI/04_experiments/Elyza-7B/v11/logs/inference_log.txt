@@ -1,0 +1,18 @@
+model_path = "outputs_v11" 
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = model_path,
+    max_seq_length = 2048,
+    load_in_4bit = True,
+)
+FastLanguageModel.for_inference(model)
+
+sys_msg = "IT法務コンサルタントとして、プロダクト仕様に関連する法的リスクを判定し、実務的な修正案を提示してください。"
+question = "Googleアナリティクスを導入したいのですが、法的リスクと対策を教えてください。"
+
+
+--- 推論開始 ---
+リスクレベル：中
+該当法：専門外
+理由：個人情報保護法やプライバシーポリシーの作成は、IT法務の専門領域ではありません。アナリティクスの導入に伴うデータの取り扱いに関する法的リスク判断は法的な観点から慎重な検討が必要です。
+修正案：個人情報保護委員会のガイドラインを確認し、プライバシーポリシーの評価を受けてください。

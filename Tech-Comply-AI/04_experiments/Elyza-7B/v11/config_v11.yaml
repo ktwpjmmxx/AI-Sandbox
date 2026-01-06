@@ -1,0 +1,30 @@
+model_config:
+  base_model: "elyza/ELYZA-japanese-Llama-2-7b-instruct"
+  load_in_4bit: true
+  max_seq_length: 2048
+  dtype: null # 自動設定
+
+lora_config:
+  r: 32           # 64から半減させ、柔軟性を確保
+  lora_alpha: 64  # rの2倍を維持
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  lora_dropout: 0.05 # わずかにドロップアウトを入れ、特定のフレーズへの固執を防ぐ
+  bias: "none"
+  use_gradient_checkpointing: "unsloth"
+  random_state: 3407
+
+training_config:
+  dataset_path: "traindata_v11.jsonl" # v10ベースに微修正を加えたもの
+  output_dir: "outputs_v11"
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  warmup_steps: 10 # 少し長めに設定し、学習を安定させる
+  max_steps: -1
+  num_train_epochs: 2.0 # 黄金比の2.0をターゲットにする
+  learning_rate: 1e-4   # 2e-4から下げて、過学習を抑制
+  fp16: true
+  logging_steps: 1
+  optim: "adamw_8bit"
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine" # linearから変更。終盤に学習率を絞り、収束を綺麗にする
+  seed: 3407
