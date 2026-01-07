@@ -14,8 +14,8 @@ lora_config:
   random_state: 3407
 
 training_config:
-  dataset_path: "traindata.jsonl"
-  output_dir: "outputs_fin"
+  dataset_path: "traindata_v13.jsonl"
+  output_dir: "outputs_v13"
   per_device_train_batch_size: 2
   gradient_accumulation_steps: 4
   warmup_steps: 5 # 10から5に短縮。早期から本格学習を開始する狙い

@@ -4,12 +4,12 @@ from unsloth import FastLanguageModel
 import torch
 
 print("=" * 60)
-print("Elyza-7B Inference Script")
+print("Elyza-7B v13 Inference Script")
 print("=" * 60)
 
 # モデルの読み込み
 print("\nモデルを読み込んでいます...")
-model_path = "/content/outputs_final/**" 
+model_path = "/content/outputs_v13" 
 
 try:
     model, tokenizer = FastLanguageModel.from_pretrained(
@@ -20,14 +20,14 @@ try:
     FastLanguageModel.for_inference(model)
     print(f"✓ モデル読み込み完了: {model_path}")
 except Exception as e:
-    print(f"✗ 読み込み失敗。理由: {e}")
+    print(f"✗ 読み込み失敗。本当の理由: {e}")
     import traceback
     traceback.print_exc()
     exit(1)
 
 def ask_v13(question, system_message=None):
     """
-    法務モデルに質問を投げて回答を取得
+    v13モデルに質問を投げて回答を取得
     
     Args:
         question: 質問文
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         print(f"{'='*60}")
         print(f"\n【質問】\n{test['question']}")
         print(f"\n【期待される挙動】\n{test['expected']}")
-        print(f"\n【法務コンサルモデルの回答】")
+        print(f"\n【v13の回答】")
         print("-" * 60)
         
         try:

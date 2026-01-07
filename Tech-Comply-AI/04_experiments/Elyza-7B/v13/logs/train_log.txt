@@ -1,0 +1,138 @@
+============================================================
+Elyza-7B v13 Training Script
+============================================================
+
+[1/7] 設定ファイルの読み込み...
+  - LoRA r: 32
+  - LoRA alpha: 64
+  - Learning rate: 0.00015
+  - Epochs: 3.0
+  - Dropout: 0.05
+
+[2/7] ベースモデルの読み込み...
+==((====))==  Unsloth 2026.1.2: Fast Llama patching. Transformers: 4.57.3.
+   \\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.
+O^O/ \_/ \    Torch: 2.9.1+cu128. CUDA: 7.5. CUDA Toolkit: 12.8. Triton: 3.5.1
+\        /    Bfloat16 = FALSE. FA [Xformers = 0.0.33.post2. FA2 = False]
+ "-____-"     Free license: http://github.com/unslothai/unsloth
+Unsloth: Fast downloading is enabled - ignore downloading bars which are red colored!
+Loading checkpoint shards: 100% 2/2 [01:07<00:00, 33.75s/it]
+Some weights of the model checkpoint at elyza/ELYZA-japanese-Llama-2-7b-instruct were not used when initializing LlamaForCausalLM: ['model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.16.self_attn.rotary_emb.inv_freq', 'model.layers.17.self_attn.rotary_emb.inv_freq', 'model.layers.18.self_attn.rotary_emb.inv_freq', 'model.layers.19.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.20.self_attn.rotary_emb.inv_freq', 'model.layers.21.self_attn.rotary_emb.inv_freq', 'model.layers.22.self_attn.rotary_emb.inv_freq', 'model.layers.23.self_attn.rotary_emb.inv_freq', 'model.layers.24.self_attn.rotary_emb.inv_freq', 'model.layers.25.self_attn.rotary_emb.inv_freq', 'model.layers.26.self_attn.rotary_emb.inv_freq', 'model.layers.27.self_attn.rotary_emb.inv_freq', 'model.layers.28.self_attn.rotary_emb.inv_freq', 'model.layers.29.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.30.self_attn.rotary_emb.inv_freq', 'model.layers.31.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq']
+- This IS expected if you are initializing LlamaForCausalLM from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing LlamaForCausalLM from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+elyza/ELYZA-japanese-Llama-2-7b-instruct does not have a padding token! Will use pad_token = <unk>.
+  ✓ モデル読み込み完了
+
+[3/7] LoRAアダプタの設定...
+Unsloth: Dropout = 0 is supported for fast patching. You are using dropout = 0.05.
+Unsloth will patch all other layers, except LoRA matrices, causing a performance hit.
+Unsloth 2026.1.2 patched 32 layers with 0 QKV layers, 0 O layers and 0 MLP layers.
+  ✓ LoRAアダプタ適用完了
+
+[4/7] データセットの読み込み...
+  ✓ データセット読み込み完了: 1104 samples
+
+[5/7] トレーナーの設定...
+  ✓ トレーナー設定完了
+
+[6/7] 学習開始...
+------------------------------------------------------------
+The model is already on multiple devices. Skipping the move to device specified in `args`.
+==((====))==  Unsloth - 2x faster free finetuning | Num GPUs used = 1
+   \\   /|    Num examples = 1,104 | Num Epochs = 3 | Total steps = 414
+O^O/ \_/ \    Batch size per device = 2 | Gradient accumulation steps = 4
+\        /    Data Parallel GPUs = 1 | Total batch size (2 x 4 x 1) = 8
+ "-____-"     Trainable parameters = 79,953,920 of 6,818,369,536 (1.17% trained)
+wandb: (1) Create a W&B account
+wandb: (2) Use an existing W&B account
+wandb: (3) Don't visualize my results
+wandb: Enter your choice: 3
+wandb: You chose "Don't visualize my results"
+wandb: Tracking run with wandb version 0.23.1
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /content/wandb/offline-run-20260107_020722-875zpxsp
+wandb: Detected [huggingface_hub.inference, openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+  0% 0/414 [00:00<?, ?it/s]Unsloth: Will smartly offload gradients to save VRAM!
+{'loss': 1.4051, 'grad_norm': 0.7934118509292603, 'learning_rate': 0.0001485330073349633, 'epoch': 0.07}
+{'loss': 0.9241, 'grad_norm': 0.5259488821029663, 'learning_rate': 0.00014486552567237162, 'epoch': 0.14}
+{'loss': 0.8478, 'grad_norm': 0.4124974012374878, 'learning_rate': 0.00014119804400977994, 'epoch': 0.22}
+{'loss': 0.805, 'grad_norm': 0.4213324189186096, 'learning_rate': 0.00013753056234718826, 'epoch': 0.29}
+{'loss': 0.7935, 'grad_norm': 0.4416944980621338, 'learning_rate': 0.00013386308068459655, 'epoch': 0.36}
+{'loss': 0.7547, 'grad_norm': 0.4134572446346283, 'learning_rate': 0.00013019559902200487, 'epoch': 0.43}
+{'loss': 0.7417, 'grad_norm': 0.43713489174842834, 'learning_rate': 0.0001265281173594132, 'epoch': 0.51}
+{'loss': 0.7343, 'grad_norm': 0.4321727752685547, 'learning_rate': 0.00012286063569682152, 'epoch': 0.58}
+{'loss': 0.7226, 'grad_norm': 0.41053882241249084, 'learning_rate': 0.00011919315403422982, 'epoch': 0.65}
+{'loss': 0.7112, 'grad_norm': 0.44056397676467896, 'learning_rate': 0.00011552567237163815, 'epoch': 0.72}
+{'loss': 0.6806, 'grad_norm': 0.4644830822944641, 'learning_rate': 0.00011185819070904645, 'epoch': 0.8}
+{'loss': 0.6683, 'grad_norm': 0.43813297152519226, 'learning_rate': 0.00010819070904645476, 'epoch': 0.87}
+{'loss': 0.6631, 'grad_norm': 0.4949604570865631, 'learning_rate': 0.00010452322738386308, 'epoch': 0.94}
+ 33% 138/414 [25:19<53:43, 11.68s/it]wandb: WARNING URL not available in offline run
+{'loss': 0.6221, 'grad_norm': 0.4059971570968628, 'learning_rate': 0.00010085574572127139, 'epoch': 1.01}
+{'loss': 0.499, 'grad_norm': 0.5336229205131531, 'learning_rate': 9.71882640586797e-05, 'epoch': 1.09}
+{'loss': 0.4898, 'grad_norm': 0.5366086959838867, 'learning_rate': 9.352078239608802e-05, 'epoch': 1.16}
+{'loss': 0.5074, 'grad_norm': 0.5548599362373352, 'learning_rate': 8.985330073349633e-05, 'epoch': 1.23}
+{'loss': 0.5144, 'grad_norm': 0.5642449855804443, 'learning_rate': 8.618581907090465e-05, 'epoch': 1.3}
+{'loss': 0.4735, 'grad_norm': 0.6783789396286011, 'learning_rate': 8.251833740831296e-05, 'epoch': 1.38}
+{'loss': 0.4748, 'grad_norm': 0.6350539922714233, 'learning_rate': 7.885085574572127e-05, 'epoch': 1.45}
+{'loss': 0.468, 'grad_norm': 0.5490193367004395, 'learning_rate': 7.518337408312959e-05, 'epoch': 1.52}
+{'loss': 0.4725, 'grad_norm': 0.5555726289749146, 'learning_rate': 7.151589242053788e-05, 'epoch': 1.59}
+{'loss': 0.4846, 'grad_norm': 0.6400073170661926, 'learning_rate': 6.78484107579462e-05, 'epoch': 1.67}
+{'loss': 0.4815, 'grad_norm': 0.6260514259338379, 'learning_rate': 6.418092909535451e-05, 'epoch': 1.74}
+{'loss': 0.4732, 'grad_norm': 0.6719852089881897, 'learning_rate': 6.051344743276283e-05, 'epoch': 1.81}
+{'loss': 0.4697, 'grad_norm': 0.5857308506965637, 'learning_rate': 5.6845965770171147e-05, 'epoch': 1.88}
+{'loss': 0.4711, 'grad_norm': 0.6831915974617004, 'learning_rate': 5.317848410757946e-05, 'epoch': 1.96}
+ 67% 276/414 [50:52<26:32, 11.54s/it]wandb: WARNING URL not available in offline run
+{'loss': 0.4187, 'grad_norm': 0.5543980598449707, 'learning_rate': 4.9511002444987776e-05, 'epoch': 2.03}
+{'loss': 0.3089, 'grad_norm': 0.6429165601730347, 'learning_rate': 4.5843520782396084e-05, 'epoch': 2.1}
+{'loss': 0.3001, 'grad_norm': 0.5780479311943054, 'learning_rate': 4.21760391198044e-05, 'epoch': 2.17}
+{'loss': 0.3046, 'grad_norm': 0.7597801089286804, 'learning_rate': 3.850855745721271e-05, 'epoch': 2.25}
+{'loss': 0.2745, 'grad_norm': 0.7428852915763855, 'learning_rate': 3.484107579462102e-05, 'epoch': 2.32}
+{'loss': 0.3207, 'grad_norm': 0.6847432255744934, 'learning_rate': 3.117359413202934e-05, 'epoch': 2.39}
+{'loss': 0.3089, 'grad_norm': 0.648487389087677, 'learning_rate': 2.7506112469437654e-05, 'epoch': 2.46}
+{'loss': 0.3138, 'grad_norm': 0.6393813490867615, 'learning_rate': 2.3838630806845965e-05, 'epoch': 2.54}
+{'loss': 0.2729, 'grad_norm': 0.6855521202087402, 'learning_rate': 2.017114914425428e-05, 'epoch': 2.61}
+{'loss': 0.2989, 'grad_norm': 0.6614861488342285, 'learning_rate': 1.650366748166259e-05, 'epoch': 2.68}
+{'loss': 0.2711, 'grad_norm': 0.7058493494987488, 'learning_rate': 1.2836185819070904e-05, 'epoch': 2.75}
+{'loss': 0.2705, 'grad_norm': 0.5851888656616211, 'learning_rate': 9.168704156479217e-06, 'epoch': 2.83}
+{'loss': 0.2634, 'grad_norm': 0.6733325123786926, 'learning_rate': 5.5012224938875306e-06, 'epoch': 2.9}
+{'loss': 0.2548, 'grad_norm': 0.6734979152679443, 'learning_rate': 1.8337408312958435e-06, 'epoch': 2.97}
+100% 414/414 [1:16:38<00:00, 11.24s/it]wandb: WARNING URL not available in offline run
+{'train_runtime': 4653.0964, 'train_samples_per_second': 0.712, 'train_steps_per_second': 0.089, 'train_loss': 0.5228107447785456, 'epoch': 3.0}
+100% 414/414 [1:17:07<00:00, 11.18s/it]
+wandb: 
+wandb: Run history:
+wandb:         train/epoch ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇███
+wandb:   train/global_step ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇███
+wandb:     train/grad_norm █▃▁▁▂▁▂▁▁▂▂▂▃▁▃▃▄▄▆▅▄▄▅▅▆▄▆▄▅▄▇▇▆▅▅▆▆▆▄▆
+wandb: train/learning_rate ███▇▇▇▇▇▇▆▆▆▆▆▆▅▅▅▅▅▄▄▄▄▄▄▃▃▃▃▃▃▂▂▂▂▂▂▁▁
+wandb:          train/loss █▅▅▄▄▄▄▄▄▄▄▄▃▃▂▂▃▃▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:               total_flos 7.207539860191642e+16
+wandb:              train/epoch 3
+wandb:        train/global_step 414
+wandb:          train/grad_norm 0.6735
+wandb:      train/learning_rate 0.0
+wandb:               train/loss 0.2548
+wandb:               train_loss 0.52281
+wandb:            train_runtime 4653.0964
+wandb: train_samples_per_second 0.712
+wandb:   train_steps_per_second 0.089
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync /content/wandb/offline-run-20260107_020722-875zpxsp
+wandb: Find logs at: ./wandb/offline-run-20260107_020722-875zpxsp/logs
+------------------------------------------------------------
+
+✓ 学習完了!
+  - 所要時間: 1:17:35.550374
+  - 最終Loss: 0.5228
+
+[7/7] モデルの保存...
+  ✓ モデル保存完了: outputs_v13
+
+============================================================
+v13 学習完了!
+============================================================
