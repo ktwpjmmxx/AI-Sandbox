@@ -1,0 +1,12 @@
+# Webサーバー関連 (API構築)
+fastapi
+uvicorn
+python-multipart  # ファイルアップロードを受け取るために必須
+
+# AIモデル関連
+faster-whisper
+google-genai
+
+# 環境・セキュリティ関連
+python-dotenv     # APIキーなどを安全に読み込むため
+pip-system-certs  # 社内ネットワーク環境等でのSSLエラー回避用
