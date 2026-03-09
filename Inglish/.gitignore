@@ -1,0 +1,25 @@
+# Python / Backend & Data Pipeline
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment Variables (Security)
+.env
+.env*
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Vector Database (Heavy Data / AI Models)
+vector_db/
+backend/vector_db/
+*.sqlite3
+*.bin
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
