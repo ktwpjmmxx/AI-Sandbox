@@ -9,7 +9,7 @@ load_dotenv()
 class VoxProcessor:
     def __init__(self):
         # 1. 音声認識モデルの読み込み（専門家A：Whisper）
-        # ※起動時に一度だけ読み込むようにして効率化します
+        # ※起動時に一度だけ読み込むようにして効率化
         print("AIモデルを準備しています...")
         self.whisper_model = WhisperModel("small", device="cpu", compute_type="int8")
         

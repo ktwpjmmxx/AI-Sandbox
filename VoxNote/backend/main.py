@@ -4,7 +4,6 @@ import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-# さきほど作成した「裏のシェフ（AI処理クラス）」を呼び出す
 from core.processor import VoxProcessor
 
 app = FastAPI(
@@ -22,10 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ==========================================
-# 【重要ポイント①】「いつ」呼び出すのか？
-# ==========================================
-# サーバー（main.py）が起動した瞬間に、1回だけ呼び出してスタンバイさせます。
+# サーバー（main.py）が起動→1回呼び出し。
 print("VoxNoteサーバーを起動中... AIモデルをメモリに読み込んでいます...")
 processor = VoxProcessor()
 print("準備完了！リクエストの受付を開始します。")
@@ -41,24 +37,21 @@ async def transcribe_audio(file: UploadFile = File(...)):
     """
     Reactから送られてきた音声ファイルを受け取り、AIで処理する窓口
     """
-    # ==========================================
-    # 【重要ポイント②】「どうやって」処理するのか？
-    # ==========================================
-    
-    # 1. FastAPIはファイルの中身（データ）だけを受け取るので、
-    # Whisperが読み込めるように「一時的なファイル」としてPCに保存します。
+
+    # 1. FastAPIはファイルのデータだけを受け取るため
+    # Whisperが読み込めるように一時的なファイルとしてPCに保存。
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_audio:
         content = await file.read()
         temp_audio.write(content)
         temp_audio_path = temp_audio.name
 
     try:
-        # 2. 保存したファイルのパスをシェフ（processor）に渡して、仕事を丸投げします。
-        # ※ここでは一旦、ジャンルを "it_dev" に固定してテストします。
+        # 2. 保存したファイルのパスをprocessorに渡す。
+        # ※ジャンルを "it_dev" に固定してテスト。
         print(f"AI処理を開始します: {file.filename}")
         result = processor.process(temp_audio_path, genre="it_dev")
         
-        # 3. シェフから返ってきた「文字起こし」と「要約」の結果をReactに返します。
+        # 3. 文字起こしと要約の結果をReactに返す。
         return {
             "status": "success",
             "filename": file.filename,
@@ -67,8 +60,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
         }
     
     finally:
-        # 4. 【後片付け】処理が終わったら、エラーが起きた場合でも必ず一時ファイルを削除します。
-        # これをやらないと、使えば使うほどサーバーの容量がパンクしてしまいます。
+        # 4.処理後、一時ファイルを削除。
         if os.path.exists(temp_audio_path):
             os.remove(temp_audio_path)
             
