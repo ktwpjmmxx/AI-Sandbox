@@ -11,21 +11,21 @@
 ### ホーム画面 — レシピ一覧
 カテゴリチップでフィルタ、ソートで並び替え。写真なしのレシピはカテゴリ別のデフォルトアイコンを表示。
 
-![ホーム画面](docs/screenshots/07_home_with_recipe.png)
+![ホーム画面](screenshots/07_home_with_recipe.png)
 
 <br>
 
 ### レシピ登録フォーム — 基本情報 & 写真アップロード
 料理名・カテゴリ（タップ式ピル）・基準人数・調理時間を入力。写真はその場でプレビューして確認できます。
 
-![フォーム基本情報](docs/screenshots/04_form_photo_ingredients.png)
+![フォーム基本情報](screenshots/04_form_photo_ingredients.png)
 
 <br>
 
 ### レシピ登録フォーム — 材料 & 手順
 食材名・分量・単位をセットで登録。手順にはワンポイントヒントを任意で追加できます。
 
-![フォーム手順入力](docs/screenshots/05_form_steps.png)
+![フォーム手順入力](screenshots/05_form_steps.png)
 
 <br>
 
@@ -34,21 +34,21 @@
 
 | 2人前で表示 | 6人前に切り替え（自動換算） |
 |:---:|:---:|
-| ![詳細2人前](docs/screenshots/08_detail_mobile.png) | ![詳細6人前](docs/screenshots/10_serving_selector.png) |
+| ![詳細2人前](screenshots/08_detail_mobile.png) | ![詳細6人前](screenshots/10_serving_selector.png) |
 
 <br>
 
 ### AIアシスタント
 「みりんの代用は？」「時短テクニックは？」などをその場で質問。OpenAI APIキー設定でGPT-4o-miniが本格回答します（未設定時はモック回答）。
 
-![AIアシスタント](docs/screenshots/09_ai_assistant.png)
+![AIアシスタント](screenshots/09_ai_assistant.png)
 
 <br>
 
 ### お気に入り管理
 ハートアイコンをタップするだけでお気に入り登録。専用タブで一覧管理できます。
 
-![お気に入り](docs/screenshots/02_favorites.png)
+![お気に入り](screenshots/02_favorites.png)
 
 <br>
 
