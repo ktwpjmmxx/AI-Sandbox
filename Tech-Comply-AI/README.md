@@ -88,6 +88,21 @@ Tech-Comply-AI/
 
 ---
 
+## モデルデータの取得について
+
+本アプリケーションで使用するファインチューニング済みのモデルデータは、Hugging Face Hubにてホスティングしています。
+
+アプリケーションをローカルで実行する場合は、以下のHugging Faceリポジトリから関連ファイルをすべてダウンロードし、プロジェクト内の所定の場所に配置してください。
+
+* **Hugging Face Model:** [ktwpj/ComplyAI](https://huggingface.co/ktwpj/ComplyAI/tree/main)
+
+**配置手順:**
+1. 上記リンクの「Files and versions」タブにアクセスします。
+2. リポジトリ内のすべてのファイル（`adapter_model.safetensors`, `adapter_config.json`, `tokenizer`関連ファイル）をダウンロードします。
+3. ダウンロードしたファイル群を、本プロジェクトの `models/` ディレクトリにすべて配置してください。
+
+---
+
 ## 免責事項
 
 本ツールは法的助言を提供するものではなく、**開発・運用の補助ツール**として設計されています。最終的な法的判断は必ず専門家（弁護士等）に相談してください。
