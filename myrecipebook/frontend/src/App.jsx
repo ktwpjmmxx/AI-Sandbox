@@ -1,19 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import RecipeListPage   from './pages/RecipeListPage'
+import HomePage        from './pages/HomePage'
+import LibraryPage     from './pages/LibraryPage'
+import FavoritesPage   from './pages/FavoritesPage'
 import RecipeDetailPage from './pages/RecipeDetailPage'
 import RecipeFormPage   from './pages/RecipeFormPage'
-import FavoritesPage    from './pages/FavoritesPage'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/"                 element={<Navigate to="/recipes" replace />} />
-        <Route path="/recipes"          element={<RecipeListPage />} />
+        <Route path="/"                 element={<Navigate to="/home" replace />} />
+        <Route path="/home"             element={<HomePage />} />
+        <Route path="/library"          element={<LibraryPage />} />
+        <Route path="/favorites"        element={<FavoritesPage />} />
         <Route path="/recipes/new"      element={<RecipeFormPage />} />
         <Route path="/recipes/:id"      element={<RecipeDetailPage />} />
         <Route path="/recipes/:id/edit" element={<RecipeFormPage />} />
-        <Route path="/favorites"        element={<FavoritesPage />} />
       </Routes>
     </BrowserRouter>
   )

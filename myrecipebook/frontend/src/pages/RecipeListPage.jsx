@@ -47,8 +47,6 @@ export default function RecipeListPage() {
             <div className="topbar-sub">{recipes.length} レシピ</div>
           </div>
         </div>
-
-        {/* 検索バー */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8,
           background: 'var(--bg)', border: '1px solid var(--border)',
@@ -73,8 +71,8 @@ export default function RecipeListPage() {
             key={cat || 'all'}
             onClick={() => setCategory(cat)}
             style={{
-              flexShrink: 0, padding: '6px 14px', borderRadius: 999,
-              fontSize: 13, border: '1px solid',
+              flexShrink: 0, padding: '6px 14px', borderRadius: 999, fontSize: 13,
+              border: '1px solid',
               borderColor: category === cat ? 'var(--blue-500)' : 'var(--border)',
               background:  category === cat ? 'var(--blue-500)' : 'var(--surface)',
               color:       category === cat ? '#fff' : 'var(--text-2)',
@@ -85,10 +83,7 @@ export default function RecipeListPage() {
       </div>
 
       {/* ── ソートバー ── */}
-      <div style={{
-        display: 'flex', gap: 8, padding: '0 16px 12px',
-        alignItems: 'center',
-      }}>
+      <div style={{ display: 'flex', gap: 8, padding: '0 16px 12px', alignItems: 'center' }}>
         <span style={{ fontSize: 12, color: 'var(--text-3)', flexShrink: 0 }}>並び順</span>
         <select
           value={sort} onChange={e => setSort(e.target.value)}
@@ -114,16 +109,35 @@ export default function RecipeListPage() {
 
       {/* ── カードリスト ── */}
       {loading ? (
-        <div className="spinner"><i className="ti ti-loader-2" style={{ fontSize: 24 }} />読み込み中…</div>
+        <div className="spinner">
+          <i className="ti ti-loader-2" style={{ fontSize: 24 }} />読み込み中…
+        </div>
       ) : recipes.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-3)' }}>
-          <i className="ti ti-tools-kitchen-2" style={{ fontSize: 48, opacity: .3 }} />
-          <p style={{ marginTop: 12, fontSize: 14, lineHeight: 1.7 }}>
-            レシピがまだありません。<br />最初の1品を追加してみましょう！
+        /* ⑥ 改善した空状態 */
+        <div style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          padding: '3rem 2rem', gap: 8,
+        }}>
+          <div style={{
+            width: 60, height: 60, borderRadius: '50%',
+            background: 'var(--blue-50)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 4,
+          }}>
+            <i className="ti ti-tools-kitchen-2" style={{ fontSize: 28, color: 'var(--blue-500)' }} />
+          </div>
+          <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-1)' }}>
+            {category ? `「${category}」のレシピはまだありません` : 'レシピがまだありません'}
           </p>
-          <button className="btn btn-primary" style={{ marginTop: 16 }}
-            onClick={() => navigate('/recipes/new')}>
-            <i className="ti ti-plus" />レシピを追加
+          <p style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.7 }}>
+            作ったレシピを記録しておけば<br />人数別の分量計算やAI相談が使えます
+          </p>
+          <button
+            className="btn btn-primary"
+            style={{ marginTop: 8 }}
+            onClick={() => navigate('/recipes/new')}
+          >
+            <i className="ti ti-plus" />最初のレシピを追加
           </button>
         </div>
       ) : (
@@ -134,11 +148,9 @@ export default function RecipeListPage() {
         </div>
       )}
 
-      {/* ── FAB ── */}
       <button className="fab" onClick={() => navigate('/recipes/new')} aria-label="レシピを追加">
         <i className="ti ti-plus" />
       </button>
-
       <BottomNav />
     </div>
   )

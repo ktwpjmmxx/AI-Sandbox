@@ -6,16 +6,25 @@ import '../global.css'
 
 const SERVING_OPTIONS = [0.5, 1, 2, 3, 4, 6]
 
-/* 数値を見やすい文字列に変換 */
-function fmtAmt(val) {
-  if (val <= 0)            return '0'
-  if (val < 0.1)           return val.toFixed(2).replace(/\.?0+$/, '')
-  if (Number.isInteger(val)) return String(val)
+function fmtNum(val) {
+  if (!val || val <= 0)       return null
+  if (Number.isInteger(val))  return String(val)
   const f = val.toFixed(1)
   return f.endsWith('.0') ? f.slice(0, -2) : f
 }
 
-/* ── AIチャットパネル ── */
+function displayAmount(ing, ratio) {
+  if (ing.amount_text) return ing.amount_text
+  const n = fmtNum((ing.amount || 0) * ratio)
+  if (!n) return ing.unit || '適量'
+  return `${n} ${ing.unit}`.trim()
+}
+
+function isNumericAmount(ing) {
+  return !ing.amount_text && ing.amount != null && ing.amount > 0
+}
+
+// ── AIパネル ──────────────────────────────────
 function AIPanel({ recipe, onClose }) {
   const [messages, setMessages] = useState([
     { role: 'bot', text: `「${recipe.title}」について何でも聞いてください！` }
@@ -23,20 +32,17 @@ function AIPanel({ recipe, onClose }) {
   const [input,   setInput]   = useState('')
   const [loading, setLoading] = useState(false)
   const chatRef = useRef()
-
-  const hints = ['時短テクニックは？', 'みりんの代用は？', '失敗しないコツは？']
+  const hints   = ['時短テクニックは？', 'みりんの代用は？', '失敗しないコツは？']
 
   const send = async (q) => {
-    const text = q || input.trim()
-    if (!text || loading) return
+    const text = q || input.trim(); if (!text || loading) return
     setMessages(m => [...m, { role: 'user', text }])
-    setInput('')
-    setLoading(true)
+    setInput(''); setLoading(true)
     try {
       const res = await askRecipeAI(recipe.id, text)
       setMessages(m => [...m, { role: 'bot', text: res.answer }])
     } catch {
-      setMessages(m => [...m, { role: 'bot', text: 'エラーが発生しました。再度お試しください。' }])
+      setMessages(m => [...m, { role: 'bot', text: 'エラーが発生しました。' }])
     } finally {
       setLoading(false)
       setTimeout(() => chatRef.current?.scrollTo(0, 9999), 50)
@@ -45,42 +51,41 @@ function AIPanel({ recipe, onClose }) {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 64, left: '50%', transform: 'translateX(-50%)',
+      position: 'fixed', bottom: 62, left: '50%', transform: 'translateX(-50%)',
       width: '100%', maxWidth: 430,
       background: 'var(--surface)', borderTop: '1px solid var(--border)',
-      zIndex: 200, padding: '12px 16px',
-      boxShadow: '0 -4px 20px rgba(0,0,0,.10)',
+      zIndex: 200, padding: '12px 16px', boxShadow: '0 -4px 20px rgba(0,0,0,.10)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--blue-500)', display: 'flex', alignItems: 'center', gap: 5 }}>
-          <i className="ti ti-sparkles" />AI アシスタント
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--gold-dark)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          ✦ AI アシスタント
         </span>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--text-3)' }}>
-          <i className="ti ti-x" />
+        <button onClick={onClose} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: 13, color: 'var(--text-3)', padding: '4px 8px',
+          borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: 4,
+        }}>
+          閉じる ✕
         </button>
       </div>
-      {/* ヒントチップ */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
         {hints.map(h => (
-          <button key={h} onClick={() => send(h)}
-            style={{
-              fontSize: 11, padding: '4px 10px', borderRadius: 999,
-              border: '1px solid var(--border)', background: 'var(--bg)',
-              color: 'var(--text-2)', cursor: 'pointer',
-            }}>{h}</button>
+          <button key={h} onClick={() => send(h)} style={{
+            fontSize: 11, padding: '4px 10px', borderRadius: 999,
+            border: '1px solid var(--border)', background: 'var(--bg)',
+            color: 'var(--text-2)', cursor: 'pointer',
+          }}>{h}</button>
         ))}
       </div>
-      {/* チャット */}
       <div ref={chatRef} style={{
         maxHeight: 130, overflowY: 'auto',
         display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8,
-        scrollbarWidth: 'thin',
       }}>
         {messages.map((m, i) => (
           <div key={i} style={{
-            padding: '7px 11px', borderRadius: 10, fontSize: 13,
-            lineHeight: 1.6, maxWidth: '88%', whiteSpace: 'pre-wrap',
-            background: m.role === 'bot' ? 'var(--bg)' : 'var(--blue-500)',
+            padding: '7px 11px', borderRadius: 10, fontSize: 13, lineHeight: 1.6,
+            maxWidth: '88%', whiteSpace: 'pre-wrap',
+            background: m.role === 'bot' ? 'var(--bg)' : 'var(--blue)',
             color:      m.role === 'bot' ? 'var(--text-1)' : '#fff',
             alignSelf:  m.role === 'bot' ? 'flex-start' : 'flex-end',
           }}>{m.text}</div>
@@ -91,46 +96,52 @@ function AIPanel({ recipe, onClose }) {
           </div>
         )}
       </div>
-      {/* 入力欄 */}
       <div style={{ display: 'flex', gap: 8 }}>
-        <input
-          value={input} onChange={e => setInput(e.target.value)}
+        <input value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && send()}
           placeholder="質問を入力…"
           style={{
             flex: 1, padding: '8px 11px', borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border)', fontSize: 13,
             background: 'var(--bg)', color: 'var(--text-1)', outline: 'none',
-          }}
-        />
-        <button onClick={() => send()}
-          style={{
-            padding: '8px 14px', background: 'var(--blue-500)', color: '#fff',
-            border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 13, cursor: 'pointer',
-          }}>送信</button>
+          }} />
+        <button onClick={() => send()} style={{
+          padding: '8px 14px', background: 'var(--blue)', color: '#fff',
+          border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 13, cursor: 'pointer',
+        }}>送信</button>
       </div>
     </div>
   )
 }
 
-/* ── メイン ── */
+// ── メインページ ──────────────────────────────
 export default function RecipeDetailPage() {
-  const { id } = useParams()
+  const { id }   = useParams()
   const navigate = useNavigate()
-  const [recipe,      setRecipe]      = useState(null)
-  const [loading,     setLoading]     = useState(true)
-  const [servings,    setServings]    = useState(null)  // null = 未取得
-  const [activeTab,   setActiveTab]   = useState('ingredients')
-  const [checkedSteps,setCheckedSteps]= useState(new Set())
-  const [showAI,      setShowAI]      = useState(false)
-  const [showDelConf, setShowDelConf] = useState(false)
+  const [recipe,       setRecipe]       = useState(null)
+  const [loading,      setLoading]      = useState(true)
+  const [servingIdx,   setServingIdx]   = useState(2)
+  const [activeTab,    setActiveTab]    = useState('ingredients')
+  const [checkedSteps, setCheckedSteps] = useState(new Set())
+  const [showAI,       setShowAI]       = useState(false)
+  const [showDelConf,  setShowDelConf]  = useState(false)
 
   useEffect(() => {
     fetchRecipe(id)
-      .then(r => { setRecipe(r); setServings(r.base_servings) })
-      .catch(() => navigate('/recipes'))
+      .then(r => {
+        setRecipe(r)
+        const closest = SERVING_OPTIONS.reduce((best, s, i) =>
+          Math.abs(s - r.base_servings) < Math.abs(SERVING_OPTIONS[best] - r.base_servings) ? i : best, 0)
+        setServingIdx(closest)
+      })
+      .catch(() => navigate('/library'))
       .finally(() => setLoading(false))
   }, [id])
+
+  const servings = SERVING_OPTIONS[servingIdx]
+
+  const changeServing = (dir) =>
+    setServingIdx(i => Math.max(0, Math.min(SERVING_OPTIONS.length - 1, i + dir)))
 
   const handleFav = async () => {
     const updated = await toggleFavorite(recipe.id)
@@ -138,91 +149,108 @@ export default function RecipeDetailPage() {
   }
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+    const file = e.target.files[0]; if (!file) return
     const updated = await uploadImage(recipe.id, file)
     setRecipe(updated)
   }
 
   const handleDelete = async () => {
     await deleteRecipe(recipe.id)
-    navigate('/recipes')
+    navigate('/library')
   }
 
   const toggleStep = (order) => {
     setCheckedSteps(prev => {
-      const n = new Set(prev)
-      n.has(order) ? n.delete(order) : n.add(order)
-      return n
+      const n = new Set(prev); n.has(order) ? n.delete(order) : n.add(order); return n
     })
   }
 
-  if (loading) return <div className="spinner"><i className="ti ti-loader-2" style={{ fontSize: 24 }} />読み込み中…</div>
-  if (!recipe)  return null
+  if (loading) return (
+    <div className="spinner">
+      <i className="ti ti-loader-2" style={{ fontSize: 24 }} />読み込み中…
+    </div>
+  )
+  if (!recipe) return null
 
-  const ratio = servings / recipe.base_servings
+  const ratio          = servings / recipe.base_servings
   const servingChanged = servings !== recipe.base_servings
+  const doneCount      = checkedSteps.size
+  const totalSteps     = recipe.steps.length
+  const canScale       = recipe.ingredients.some(ing => isNumericAmount(ing))
 
   return (
     <div className="page-wrapper">
 
-      {/* ── ヒーロー画像 ── */}
-      <div style={{ position: 'relative', height: 220 }}>
-        {recipe.image_url ? (
-          <img src={recipe.image_url} alt={recipe.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{
-            width: '100%', height: '100%', background: 'var(--blue-50)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72,
-          }}>
-            <i className="ti ti-tools-kitchen-2" style={{ color: 'var(--blue-200)' }} />
-          </div>
-        )}
+      {/* ── ① テキスト付きトップバー（白丸ボタン廃止） ── */}
+      <div style={{
+        background: 'var(--gold)',
+        padding: '12px 16px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        position: 'sticky', top: 0, zIndex: 50,
+      }}>
         {/* 戻るボタン */}
-        <button onClick={() => navigate('/recipes')}
+        <button
+          onClick={() => navigate(-1)}
           style={{
-            position: 'absolute', top: 12, left: 12,
-            width: 36, height: 36, borderRadius: '50%',
-            background: 'rgba(255,255,255,.9)', border: 'none',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 18,
-          }}>
-          <i className="ti ti-arrow-left" />
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'rgba(255,255,255,.2)', border: '1px solid rgba(255,255,255,.4)',
+            borderRadius: 'var(--radius-sm)', padding: '6px 12px',
+            color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          ← 戻る
         </button>
-        {/* お気に入り */}
-        <button onClick={handleFav}
+
+        <span style={{ fontSize: 15, fontWeight: 600, color: '#fff', flex: 1, textAlign: 'center', padding: '0 8px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          {recipe.title}
+        </span>
+
+        {/* お気に入りボタン */}
+        <button
+          onClick={handleFav}
           style={{
-            position: 'absolute', top: 12, right: 12,
-            width: 36, height: 36, borderRadius: '50%',
-            background: 'rgba(255,255,255,.9)', border: 'none',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 18, color: recipe.is_favorite ? 'var(--red)' : 'var(--text-3)',
-          }}>
-          <i className={recipe.is_favorite ? 'ti ti-heart-filled' : 'ti ti-heart'} />
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: recipe.is_favorite ? '#fff' : 'rgba(255,255,255,.2)',
+            border: '1px solid rgba(255,255,255,.4)',
+            borderRadius: 'var(--radius-sm)', padding: '6px 12px',
+            color: recipe.is_favorite ? '#E24B4A' : '#fff',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            transition: 'all var(--t)',
+          }}
+        >
+          {recipe.is_favorite ? '♥ 登録済み' : '♡ お気に入り'}
         </button>
-        {/* 写真変更 */}
+      </div>
+
+      {/* ── ヒーロー画像（ボタンなし・シンプル） ── */}
+      <div style={{ position: 'relative', height: 220 }}>
+        {recipe.image_url
+          ? <img src={recipe.image_url} alt={recipe.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          : <div style={{
+              width: '100%', height: '100%', background: 'var(--gold-light)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{ fontSize: 72, opacity: .4 }}>🍳</span>
+            </div>
+        }
+        {/* 写真変更ラベル */}
         <label style={{
           position: 'absolute', bottom: 10, right: 10,
-          background: 'rgba(0,0,0,.45)', color: '#fff',
-          padding: '5px 10px', borderRadius: 'var(--radius-sm)',
+          background: 'rgba(0,0,0,.5)', color: '#fff',
+          padding: '5px 12px', borderRadius: 'var(--radius-sm)',
           fontSize: 12, cursor: 'pointer',
           display: 'flex', alignItems: 'center', gap: 5,
         }}>
-          <i className="ti ti-camera" />写真を変更
+          📷 写真を変更
           <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
         </label>
       </div>
 
       {/* ── ボディ ── */}
       <div style={{ padding: '16px 20px' }}>
-
-        {/* カテゴリ・タイトル */}
-        <span style={{
-          fontSize: 11, padding: '3px 10px', borderRadius: 999,
-          background: 'var(--blue-50)', color: 'var(--blue-500)', fontWeight: 600,
-        }}>{recipe.category}</span>
-        <h1 style={{ fontSize: 22, fontWeight: 600, margin: '8px 0 14px', lineHeight: 1.25 }}>
+        <span className={`cat-badge cat-${recipe.category}`}>{recipe.category}</span>
+        <h1 style={{ fontSize: 22, fontWeight: 600, margin: '8px 0 10px', lineHeight: 1.25 }}>
           {recipe.title}
         </h1>
         {recipe.description && (
@@ -231,42 +259,47 @@ export default function RecipeDetailPage() {
           </p>
         )}
 
-        {/* ── 人数セレクター ── */}
+        {/* 人数ステッパー */}
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: 'var(--blue-50)', border: '1px solid var(--blue-100)',
-          borderRadius: 'var(--radius-sm)', padding: '10px 14px', marginBottom: 12,
+          display: 'flex', alignItems: 'center', gap: 10,
+          background: 'var(--gold-light)', border: '1px solid #E8D080',
+          borderRadius: 'var(--radius-sm)', padding: '10px 14px', marginBottom: 10,
         }}>
-          <div style={{ fontSize: 13, color: 'var(--text-2)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <i className="ti ti-users" style={{ color: 'var(--blue-500)' }} />
-            <span>人数を変更</span>
-          </div>
-          <select
-            value={servings}
-            onChange={e => setServings(parseFloat(e.target.value))}
+          <span style={{ fontSize: 13, color: 'var(--text-2)', flex: 1 }}>👥 人数</span>
+          <button
+            onClick={() => changeServing(-1)}
+            disabled={servingIdx === 0}
             style={{
-              border: '1px solid var(--blue-200)', borderRadius: 'var(--radius-sm)',
-              padding: '5px 10px', fontSize: 14, fontWeight: 600,
-              color: 'var(--blue-500)', background: 'var(--surface)',
-              cursor: 'pointer', outline: 'none',
-            }}
-          >
-            {SERVING_OPTIONS.map(s => (
-              <option key={s} value={s}>{s}人前</option>
-            ))}
-          </select>
+              width: 32, height: 32, borderRadius: '50%',
+              border: '1px solid var(--border)', background: 'var(--surface)',
+              cursor: servingIdx === 0 ? 'not-allowed' : 'pointer',
+              fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: servingIdx === 0 ? 'var(--text-3)' : 'var(--text-1)',
+            }}>−</button>
+          <div style={{ minWidth: 64, textAlign: 'center', fontSize: 15, fontWeight: 600, color: 'var(--gold-dark)' }}>
+            {servings}人前
+          </div>
+          <button
+            onClick={() => changeServing(1)}
+            disabled={servingIdx === SERVING_OPTIONS.length - 1}
+            style={{
+              width: 32, height: 32, borderRadius: '50%',
+              border: '1px solid var(--border)', background: 'var(--surface)',
+              cursor: servingIdx === SERVING_OPTIONS.length - 1 ? 'not-allowed' : 'pointer',
+              fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: servingIdx === SERVING_OPTIONS.length - 1 ? 'var(--text-3)' : 'var(--text-1)',
+            }}>＋</button>
         </div>
 
-        {/* 換算中バッジ */}
-        {servingChanged && (
+        {/* 換算バッジ */}
+        {servingChanged && canScale && (
           <div style={{
-            fontSize: 12, color: 'var(--blue-500)',
-            background: 'var(--blue-50)', border: '1px solid var(--blue-100)',
-            borderRadius: 'var(--radius-sm)', padding: '5px 12px',
-            marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 12, color: 'var(--blue)', background: 'var(--blue-light)',
+            border: '1px solid var(--blue-100)', borderRadius: 'var(--radius-sm)',
+            padding: '5px 12px', marginBottom: 12,
+            display: 'flex', alignItems: 'center', gap: 6,
           }}>
-            <i className="ti ti-refresh" style={{ fontSize: 13 }} />
-            {recipe.base_servings}人前 → {servings}人前に換算済み
+            ↺ {recipe.base_servings}人前 → {servings}人前に換算済み
           </div>
         )}
 
@@ -274,7 +307,7 @@ export default function RecipeDetailPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
           {[
             { label: '下準備', value: `${recipe.prep_time}分` },
-            { label: '調理', value: `${recipe.cook_time}分` },
+            { label: '調理',   value: `${recipe.cook_time}分` },
           ].map(item => (
             <div key={item.label} style={{
               background: 'var(--bg)', borderRadius: 'var(--radius-sm)',
@@ -286,86 +319,104 @@ export default function RecipeDetailPage() {
           ))}
         </div>
 
-        {/* ── タブ ── */}
+        {/* タブ */}
         <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 14 }}>
           {[
             { key: 'ingredients', label: `材料（${recipe.ingredients.length}種）` },
-            { key: 'steps',       label: `作り方（${recipe.steps.length}工程）` },
+            { key: 'steps',       label: `作り方（${totalSteps}工程）` },
           ].map(tab => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-              style={{
-                flex: 1, padding: '9px 0', fontSize: 13, fontWeight: 600,
-                background: 'none', border: 'none', cursor: 'pointer',
-                color: activeTab === tab.key ? 'var(--blue-500)' : 'var(--text-3)',
-                borderBottom: activeTab === tab.key ? '2px solid var(--blue-500)' : '2px solid transparent',
-                marginBottom: -1, transition: 'all var(--t)',
-              }}>{tab.label}</button>
+            <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+              flex: 1, padding: '9px 0', fontSize: 13, fontWeight: 600,
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: activeTab === tab.key ? 'var(--blue)' : 'var(--text-3)',
+              borderBottom: activeTab === tab.key ? '2px solid var(--blue)' : '2px solid transparent',
+              marginBottom: -1, transition: 'all var(--t)',
+            }}>{tab.label}</button>
           ))}
         </div>
 
-        {/* ── 材料タブ ── */}
+        {/* 材料タブ */}
         {activeTab === 'ingredients' && (
           <div>
             {recipe.ingredients.map((ing, i) => {
-              const scaled = ing.amount * ratio
+              const scaled  = displayAmount(ing, ratio)
+              const isFixed = !!ing.amount_text
               return (
                 <div key={i} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '11px 0', borderBottom: i < recipe.ingredients.length - 1 ? '1px solid var(--border)' : 'none',
+                  padding: '11px 0',
+                  borderBottom: i < recipe.ingredients.length - 1 ? '1px solid var(--border)' : 'none',
                   fontSize: 14,
                 }}>
                   <span>{ing.name}</span>
-                  <span style={{ fontWeight: 600, color: 'var(--blue-500)', minWidth: 80, textAlign: 'right' }}>
-                    {fmtAmt(scaled)} {ing.unit}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {isFixed && servingChanged && (
+                      <span style={{
+                        fontSize: 10, background: 'var(--gold-light)', color: 'var(--gold-dark)',
+                        padding: '1px 5px', borderRadius: 4, border: '1px solid #E8D080',
+                      }}>固定</span>
+                    )}
+                    <span style={{
+                      fontWeight: 600,
+                      color: isFixed ? 'var(--text-2)' : 'var(--blue)',
+                      minWidth: 80, textAlign: 'right',
+                    }}>{scaled}</span>
+                  </div>
                 </div>
               )
             })}
           </div>
         )}
 
-        {/* ── 手順タブ ── */}
+        {/* 手順タブ */}
         {activeTab === 'steps' && (
           <div>
+            {doneCount > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 12, color: '#3B6D11' }}>
+                <div style={{ flex: 1, height: 4, background: '#EAF3DE', borderRadius: 999, overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%', background: '#639922', borderRadius: 999,
+                    width: `${(doneCount / totalSteps) * 100}%`, transition: 'width .3s ease',
+                  }} />
+                </div>
+                <span>{doneCount} / {totalSteps} 完了</span>
+              </div>
+            )}
             <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>
               ステップをタップして完了をマーク
             </p>
             {recipe.steps.map(step => {
               const done = checkedSteps.has(step.order)
               return (
-                <div key={step.order}
-                  onClick={() => toggleStep(step.order)}
-                  style={{
-                    display: 'flex', gap: 12, padding: '12px 0',
-                    borderBottom: `1px solid var(--border)`,
-                    cursor: 'pointer', opacity: done ? .5 : 1,
-                    transition: 'opacity var(--t)',
-                  }}
-                >
+                <div key={step.order} onClick={() => toggleStep(step.order)} style={{
+                  display: 'flex', gap: 12, padding: '12px 0',
+                  borderBottom: '1px solid var(--border)',
+                  cursor: 'pointer', opacity: done ? .55 : 1, transition: 'opacity var(--t)',
+                }}>
                   <div style={{
                     width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                    background: done ? 'var(--text-3)' : 'var(--blue-500)',
+                    background: done ? 'var(--text-3)' : 'var(--blue)',
                     color: '#fff', fontSize: 12, fontWeight: 600,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    marginTop: 1, transition: 'background var(--t)',
+                    marginTop: 1,
                   }}>
-                    {done ? <i className="ti ti-check" style={{ fontSize: 13 }} /> : step.order}
+                    {done ? '✓' : step.order}
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{
                       fontSize: 14, lineHeight: 1.7,
                       textDecoration: done ? 'line-through' : 'none',
+                      color: done ? 'var(--text-3)' : 'var(--text-1)',
                     }}>{step.description}</p>
-                    {step.tip && (
+                    {done && (
                       <div style={{
-                        background: '#fffbeb', borderLeft: '3px solid var(--gold)',
-                        borderRadius: '0 6px 6px 0', padding: '6px 10px',
-                        fontSize: 12, color: '#78350f', marginTop: 6,
-                        display: 'flex', gap: 6,
-                      }}>
-                        <i className="ti ti-bulb" style={{ fontSize: 14, flexShrink: 0 }} />
-                        {step.tip}
-                      </div>
+                        display: 'inline-flex', alignItems: 'center', gap: 4,
+                        fontSize: 11, color: '#3B6D11', background: '#EAF3DE',
+                        borderRadius: 4, padding: '2px 8px', marginTop: 4,
+                      }}>✓ 完了</div>
+                    )}
+                    {step.tip && (
+                      <div className="tip-box">💡 {step.tip}</div>
                     )}
                   </div>
                 </div>
@@ -374,23 +425,23 @@ export default function RecipeDetailPage() {
           </div>
         )}
 
-        {/* ── アクションボタン行 ── */}
-        <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap' }}>
+        {/* アクションボタン */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
           <button className="btn btn-primary" onClick={() => navigate(`/recipes/${id}/edit`)}>
-            <i className="ti ti-edit" />編集
+            ✏️ 編集
           </button>
           <button className="btn btn-ghost" onClick={() => setShowAI(v => !v)}>
-            <i className="ti ti-sparkles" />AI相談
+            ✦ AI相談
           </button>
           <button className="btn btn-danger" onClick={() => setShowDelConf(true)}>
-            <i className="ti ti-trash" />削除
+            🗑 削除
           </button>
         </div>
 
         {/* 削除確認 */}
         {showDelConf && (
           <div style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,.4)',
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             zIndex: 300, padding: 20,
           }}>
@@ -399,23 +450,21 @@ export default function RecipeDetailPage() {
               padding: 24, maxWidth: 320, width: '100%',
             }}>
               <p style={{ fontWeight: 600, marginBottom: 8 }}>「{recipe.title}」を削除しますか？</p>
-              <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>
-                この操作は取り消せません。
-              </p>
+              <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>この操作は取り消せません。</p>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-ghost" style={{ flex: 1 }}
-                  onClick={() => setShowDelConf(false)}>キャンセル</button>
-                <button className="btn btn-danger" style={{ flex: 1 }}
-                  onClick={handleDelete}>削除する</button>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setShowDelConf(false)}>
+                  キャンセル
+                </button>
+                <button className="btn btn-danger" style={{ flex: 1 }} onClick={handleDelete}>
+                  削除する
+                </button>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* ── AIパネル ── */}
       {showAI && <AIPanel recipe={recipe} onClose={() => setShowAI(false)} />}
-
       <BottomNav />
     </div>
   )
